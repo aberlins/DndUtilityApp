@@ -1,0 +1,6 @@
+Good=Service: Using my talents to help others is the best way of helping myself.
+Evil=Selfish: What people don't know WILL hurt them, but why is that my problem?
+Chaotic=Wanderer: I go where the road takes me. Sometimes that's a good thing...
+Lawful=Fittest: On the open road, the law of nature wins. Victims are the unprepared.
+Neutral=Focused: I simply have a job to do, and I'm going to do it.
+Any=Motivated: There's a reason I'm good at what I do, I pay attention to the details.

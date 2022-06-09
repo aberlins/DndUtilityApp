@@ -1,0 +1,6 @@
+Any=Discover: I want to be the first person to discover a lost culture.
+Lawful=Distance: One must not interfere with the affairs of another culture – even one in need of aid.
+Any=Knowledge: By understanding other races and cultures, we learn to understand ourselves.
+Lawful=Power: Common people crave strong leadership, and I do my utmost to provide it.
+Good=Protection: I must do everything possible to save a society facing extinction.
+Chaotic=Indifferent. Life is cruel. What's the point in saving people if they're going to die anyway?

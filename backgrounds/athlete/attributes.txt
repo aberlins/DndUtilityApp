@@ -1,0 +1,4 @@
+Acrobatics=Athletics
+Vehicles (Land)
+Any
+A Leather Ball=A Lucky Charm=A Set of Traveler’s Clothes=A Pouch Containing 10 gp

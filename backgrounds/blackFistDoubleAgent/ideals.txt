@@ -1,0 +1,6 @@
+Any=Suspicious: In my experience, everybody has something to hide, and what they hide can usually hurt me
+Any=Secretive: I trade in secrets, and am not about to let any of mine slip
+Chaotic=Hedonist: Life is short. I live my life to the fullest, as I know any day could be my last
+Good=Selfless: I use my position to help the downtrodden avoid persecution from the authorities
+Lawful=Patriotic: I am a loyal supporter of Phlan and its leaders, and see my role as a solemn duty and necessary evil to prevent anarchy
+Evil=Manipulative: I use my knowledge to blackmail and manipulate others to my own benefit

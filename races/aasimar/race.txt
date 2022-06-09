@@ -1,0 +1,45 @@
+Aasimar/2=Protector Aasimar/10=Scourge Aasimar/14=Fallen Aasimar/18=Angelkin Aasimar/22=Emberkin Aasimar/26=Idyllkin Aasimar/30=Lawbringer Aasimar/34=Musetouched Aasimar/38=Plumekith Aasimar/42
+Aasimar
+0=0=0=0=1=2
+Light=1=C=Lesser Restoration=3=L=Daylight=5=L=Charisma
+Darkvision=Celestial Resistance=Healing Hands
+160
+Medium
+30
+Common=Celestial
+Protector Aasimar
+0=0=0=0=1=2
+Light=1=C=Charisma
+Darkvision=Celestial Resistance=Healing Hands=Radiant Soul
+Scourge Aasimar
+0=0=1=0=0=2
+Light=1=C=Charisma
+Darkvision=Celestial Resistance=Healing Hands=Radiant Consumption
+Fallen Aasimar
+1=0=0=0=0=2
+Light=1=C=Charisma
+Darkvision=Celestial Resistance=Healing Hands=Necrotic Shroud
+Angelkin Aasimar
+1=0=0=0=0=2
+Light=1=C=Charisma
+Darkvision=Celestial Resistance=Healing Hands=Radiant Virtue
+Emberkin Aasimar
+0=0=0=1=0=2
+Light=1=C=Charisma
+Darkvision=Celestial Resistance=Healing Hands=Fiery Sorcery
+Idyllkin Aasimar
+0=0=1=0=0=2
+Light=1=C=Charisma
+Darkvision=Celestial Resistance=Healing Hands=Agents of God
+Lawbringer Aasimar
+0=0=0=0=1=2
+Light=1=C=Charisma
+Darkvision=Celestial Resistance=Healing Hands=Good Influence
+Musetouched Aasimar
+0=1=0=0=0=2
+Light=1=C=Charisma
+Darkvision=Celestial Resistance=Healing Hands=Diplomatic Influence
+Plumekith Aasimar
+0=1=0=0=0=2
+Light=1=C=Charisma
+Darkvision=Celestial Resistance=Healing Hands=Toxophilite

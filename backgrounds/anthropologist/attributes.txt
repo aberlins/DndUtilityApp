@@ -1,0 +1,4 @@
+Insight=Religion
+None
+Any=Any
+A Leather-Bound Diary=A Bottle of Ink=An Ink Pen=A Set of Traveler’s Clothes=One Trinket of Special Significance=A Pouch Containing 10 gp

@@ -1,0 +1,4 @@
+Insight=Religion
+None
+Any=Any
+A Holy Symbol=A Prayer Book=5 Sticks of Incense=Vestments=a Set of Common Clothes=A Belt Pouch which is Containing 15 gp

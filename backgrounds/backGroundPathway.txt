@@ -1,0 +1,11 @@
+Acolyte=backgrounds/acolyte
+Anthropologist=backgrounds/anthropologist
+Athlete=backgrounds/athlete
+Archaeologist=backgrounds/archaeologist
+Azorius Functionary=backgrounds/azoriusFunctionary
+Black Fist Double Agent=backgrounds/blackFistDoubleAgent
+Boros Legionnaire=backgrounds/borosLegionnaire
+Celebrity Adventurer’s Scion=backgrounds/celebrityAdventurersScion
+Caravan Specialist=backgrounds/caravanSpecialist
+Charlatan=backgrounds/charlatan
+City Watch=backgrounds/CityWatch

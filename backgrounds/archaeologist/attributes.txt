@@ -1,0 +1,4 @@
+History=Survival
+Navigator’s tools
+Any
+A Wooden Case Containing a Map to a Ruin=A Bullseye Lantern=A Miner’s Pick=A Set of Traveler’s Clothes=A Shovel=A Two-Person Tent=A Trinket Recovered from a Dig Site=A Pouch Containing 25 gp
