@@ -86,6 +86,16 @@ public class RandUtils {
 		}
 	}
 	
+	public static String randomTraitEx(String fileName, int index)
+	{
+		String attributes [] = IOUtils.getCol(index, fileName);
+		int numChoices = attributes.length - 1;
+		
+		int dieRoll = (int)(Math.random() * numChoices) + 1;
+		return attributes[dieRoll];
+		
+	}
+	
 	/*Utility Method used to generate one of the nine alignments in DND 5e.*/
 	public static Alignment randomAlignment() 
 	{
@@ -158,16 +168,16 @@ public class RandUtils {
 			
 			String backgroundFolder = IOUtils.getAttributeFolder(background.getName(), 
 					Background.backgroundFileName);
-			randomIdealEx(background);
-			background.setBond(randomTrait(backgroundFolder + "/bonds.txt"));
-			background.setFlaw(randomTrait(backgroundFolder + "/flaws.txt"));
+			randomIdeal(background);
+			background.setBond(randomTraitEx(Background.backBondFileName, background.getBackgroundIndex()));
+			background.setFlaw(randomTraitEx(Background.backFlawFileName, background.getBackgroundIndex()));
 			background.setPersonalityTrait(randomTrait(backgroundFolder + "/personalityTraits.txt"));
 			
 			return background;
 		}
 	}
 	
-	private static void randomIdealEx(Background background) 
+	private static void randomIdeal(Background background) 
 	{
 		int index = background.getBackgroundIndex();
 		String ideals [] = IOUtils.getCol(index, Background.backIdealFileName);
@@ -177,29 +187,10 @@ public class RandUtils {
 		while (continueLoop) 
 		{
 			int idealIndex = (int)(Math.random() * numChoices) + 1;
-			if (background.setIdealExcel(idealIndex)) {
+			if (background.setIdeal(idealIndex)) {
 				continueLoop = false;
 			}
 		}
-	}
-	
-	private static void randomIdeal(Background background)  throws FileNotFoundException, IOException
-	{
-		
-		long numOfLines = IOUtils.getLineCount(IOUtils.getAttributeFolder(background.getName(), 
-				Background.backgroundFileName) + "/ideals.txt");
-		
-		if (numOfLines > 0) 
-		{
-			boolean continueLoop = true;
-			while (continueLoop) 
-			{
-				long idealIndex = (long)(Math.random() * numOfLines) + 1;
-				if (background.setIdeal(idealIndex)) {
-					continueLoop = false;
-				}
-			}
-		}	
 	}
 	
 	public static Race randomRace() throws FileNotFoundException, IOException, Exception

@@ -9,9 +9,12 @@ import util.IOUtils;
 public class Background {
 	
 	private Alignment alignment;
+	private int backgroundIndex;
 	private String name, ideal, personalityTrait, bond, flaw;
 	private String [] skillProficiences, toolProficiences, languages, equipment;
 	public static final String backgroundFileName = "backgrounds/backGroundPathway.txt";
+	public static final String backBondFileName = "backgrounds/Bonds.xlsx";
+	public static final String backFlawFileName = "backgrounds/Flaws.xlsx";
 	public static final String backIdealFileName = "backgrounds/Ideals.xlsx";
 	public static final String backAttFileName = "backgrounds/Attributes.xlsx";
 	
@@ -19,6 +22,7 @@ public class Background {
 	{
 		this.alignment = alignment;
 		this.name = name;
+		this.backgroundIndex = findBackgroundIndex();
 		initalizeBackgroundAtts();
 	}
 
@@ -33,6 +37,7 @@ public class Background {
 	public String[] getToolProficiences() { return toolProficiences; }
 	public String[] getLanguages() { return languages; }
 	public String[] getEquipment() { return equipment; }
+	public int getBackgroundIndex() { return backgroundIndex; }
 
 	/*Simple Setters for all traits of the background*/
 	public void setIdeal(String ideal) { this.ideal = ideal; }
@@ -50,11 +55,10 @@ public class Background {
 		}
 	}
 	
-	public boolean setIdealExcel(int idealNum) 
+	public boolean setIdeal(int idealNum) 
 	{
 		String idealList [] = null;
 		String ideal [] = null;
-		int backgroundIndex = getBackgroundIndex();
 		
 		if(backgroundIndex != -1) 
 		{
@@ -72,54 +76,6 @@ public class Background {
 			}
 		}
 		
-		return false;
-	}
-	
-	public boolean setIdeal(long idealNum) 
-	{
-		String fileName = null;
-		try {
-			fileName = IOUtils.getAttributeFolder(name, backgroundFileName);
-			if (fileName != null) 
-			{
-				fileName += "/ideals.txt";
-				try (Scanner fileStream = new Scanner(new File(fileName))) 
-				{
-					int lineCounter = 1;
-					String [] idealList = null;
-					while (fileStream.hasNextLine()) 
-					{
-						if (lineCounter++ == idealNum) 
-						{
-							idealList = fileStream.nextLine().split("=");
-							break;
-						}
-						else
-							fileStream.nextLine();
-					}
-					
-					if (idealList == null) {
-						return false;
-					}
-					else if (idealList[0].equalsIgnoreCase("Any") || alignment.getGEAxis().equalsIgnoreCase(idealList[0])
-							|| alignment.getLCAxis().equalsIgnoreCase(idealList[0])) 
-					{
-						this.ideal = idealList[1];
-						return true;
-					}
-				}
-			}
-			else 
-				return false;
-		}
-		catch (FileNotFoundException e) 
-		{
-			System.out.println("An error has occured locating the files: " + fileName + ", " + backgroundFileName);
-		}
-		catch (IOException e) 
-		{
-			System.out.println("An error has occured when reading the files: " + fileName + ", " + backgroundFileName);
-		}
 		return false;
 	}
 	
@@ -222,7 +178,7 @@ public class Background {
 		return null;
 	}
 	
-	public int getBackgroundIndex() 
+	public int findBackgroundIndex() 
 	{
 		String backgroundlist [] = IOUtils.getRow(0, backAttFileName);
 		
