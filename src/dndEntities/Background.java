@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
-import util.GenUtils;
+import util.IOUtils;
 
 public class Background {
 	
@@ -12,6 +12,8 @@ public class Background {
 	private String name, ideal, personalityTrait, bond, flaw;
 	private String [] skillProficiences, toolProficiences, languages, equipment;
 	public static final String backgroundFileName = "backgrounds/backGroundPathway.txt";
+	public static final String backIdealFileName = "backgrounds/Ideals.xlsx";
+	public static final String backAttFileName = "backgrounds/Attributes.xlsx";
 	
 	public Background (Alignment alignment, String name) 
 	{
@@ -48,11 +50,36 @@ public class Background {
 		}
 	}
 	
+	public boolean setIdealExcel(int idealNum) 
+	{
+		String idealList [] = null;
+		String ideal [] = null;
+		int backgroundIndex = getBackgroundIndex();
+		
+		if(backgroundIndex != -1) 
+		{
+			idealList = IOUtils.getCol(backgroundIndex, backIdealFileName);
+			
+			if (idealList != null) 
+			{
+				ideal = idealList[idealNum].split("=");
+				if (ideal[0].equalsIgnoreCase("Any") || alignment.getGEAxis().equalsIgnoreCase(ideal[0])
+						|| alignment.getLCAxis().equalsIgnoreCase(ideal[0])) 
+				{
+					this.ideal = ideal[1];
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
 	public boolean setIdeal(long idealNum) 
 	{
 		String fileName = null;
 		try {
-			fileName = GenUtils.getAttributeFolder(name, backgroundFileName);
+			fileName = IOUtils.getAttributeFolder(name, backgroundFileName);
 			if (fileName != null) 
 			{
 				fileName += "/ideals.txt";
@@ -130,7 +157,7 @@ public class Background {
 	{
 		String fileName = null;
 		try {
-			fileName = GenUtils.getAttributeFolder(name, backgroundFileName);
+			fileName = IOUtils.getAttributeFolder(name, backgroundFileName);
 			if (fileName != null) 
 			{
 				fileName += "/attributes.txt";
@@ -157,7 +184,7 @@ public class Background {
 	{
 		String fileName = null;
 		try {
-			fileName = GenUtils.getAttributeFolder(name, backgroundFileName);
+			fileName = IOUtils.getAttributeFolder(name, backgroundFileName);
 			if (fileName != null) 
 			{
 				fileName += fileExtension;
@@ -193,5 +220,19 @@ public class Background {
 			System.out.println("Improper formatting with the file: " + fileName);
 		}
 		return null;
+	}
+	
+	public int getBackgroundIndex() 
+	{
+		String backgroundlist [] = IOUtils.getRow(0, backAttFileName);
+		
+		for (int i = 0; i < backgroundlist.length; i++) 
+		{
+			if (backgroundlist[i].equalsIgnoreCase(name)) {
+				return i;
+			}
+		}
+		
+		return -1;
 	}
 }

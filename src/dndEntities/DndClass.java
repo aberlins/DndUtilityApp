@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
-import util.GenUtils;
+import util.IOUtils;
 
 public class DndClass {
 	
@@ -24,7 +24,7 @@ public class DndClass {
 	{
 		String fileName = null;
 		try {
-			fileName = GenUtils.getAttributeFolder(className, classFileName);
+			fileName = IOUtils.getAttributeFolder(className, classFileName);
 			if (fileName != null) 
 			{
 				fileName += "/basicFeatures.txt";

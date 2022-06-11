@@ -3,7 +3,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
-import util.GenUtils;
+import util.IOUtils;
 
 import java.util.NoSuchElementException;
 
@@ -19,7 +19,7 @@ public class Race
 	{
 		String fileName = null;
 		try {
-			fileName = GenUtils.getAttributeFolder(raceName, raceFileName);
+			fileName = IOUtils.getAttributeFolder(raceName, raceFileName);
 			if (fileName != null) {
 				fileName += "/race.txt";
 				initializeRace(fileName, raceName);
@@ -57,7 +57,7 @@ public class Race
 	{
 		try (Scanner fileStream = new Scanner(new File(fileName)))
 		{
-			String startPointS = GenUtils.getStartingPoint(fileStream, raceName); currentLine++;
+			String startPointS = IOUtils.getStartingPoint(fileStream, raceName); currentLine++;
 			
 				int startPoint = Integer.parseInt(startPointS);
 				

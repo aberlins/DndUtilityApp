@@ -70,7 +70,7 @@ public class RandUtils {
 		{
 			//Array meant to hold all values is allocated the proper memory.
 			//Counter variable is used to keep track of index.
-			long lineCount = GenUtils.getLineCount(fileName);
+			long lineCount = IOUtils.getLineCount(fileName);
 			String [] traitArray = new String[(int)lineCount];
 			int counter = 0;
 					
@@ -123,7 +123,7 @@ public class RandUtils {
 	For now only Male and Female are available options for first names. */
 	public static String randomName(Race race, String gender) throws FileNotFoundException, IOException, Exception
 	{
-		String raceFolder = GenUtils.getAttributeFolder(race.getName(), Race.raceFileName);
+		String raceFolder = IOUtils.getAttributeFolder(race.getName(), Race.raceFileName);
 		
 		//First generate the first name depending on the gender
 		String name = null;
@@ -156,9 +156,9 @@ public class RandUtils {
 			Background background = new Background(alignment, 
 					backgroundList.get((int)(Math.random() * backgroundList.size())));
 			
-			String backgroundFolder = GenUtils.getAttributeFolder(background.getName(), 
+			String backgroundFolder = IOUtils.getAttributeFolder(background.getName(), 
 					Background.backgroundFileName);
-			randomIdeal(background);
+			randomIdealEx(background);
 			background.setBond(randomTrait(backgroundFolder + "/bonds.txt"));
 			background.setFlaw(randomTrait(backgroundFolder + "/flaws.txt"));
 			background.setPersonalityTrait(randomTrait(backgroundFolder + "/personalityTraits.txt"));
@@ -167,10 +167,26 @@ public class RandUtils {
 		}
 	}
 	
+	private static void randomIdealEx(Background background) 
+	{
+		int index = background.getBackgroundIndex();
+		String ideals [] = IOUtils.getCol(index, Background.backIdealFileName);
+		int numChoices = ideals.length - 1;
+		
+		boolean continueLoop = true;
+		while (continueLoop) 
+		{
+			int idealIndex = (int)(Math.random() * numChoices) + 1;
+			if (background.setIdealExcel(idealIndex)) {
+				continueLoop = false;
+			}
+		}
+	}
+	
 	private static void randomIdeal(Background background)  throws FileNotFoundException, IOException
 	{
 		
-		long numOfLines = GenUtils.getLineCount(GenUtils.getAttributeFolder(background.getName(), 
+		long numOfLines = IOUtils.getLineCount(IOUtils.getAttributeFolder(background.getName(), 
 				Background.backgroundFileName) + "/ideals.txt");
 		
 		if (numOfLines > 0) 
