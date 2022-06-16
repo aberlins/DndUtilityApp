@@ -88,7 +88,9 @@ public class IOUtils {
 		
 		while (cellIterator.hasNext()) 
 		{
-			rowList.add(cellIterator.next().getStringCellValue());
+			Cell entry = cellIterator.next();
+			if (entry != null)
+				rowList.add(entry.getStringCellValue());
 		}
 		
 		return rowList.toArray(new String[0]);
@@ -117,7 +119,9 @@ public class IOUtils {
 		
 		while (rowIterator.hasNext()) 
 		{
-			colList.add(rowIterator.next().getCell(colIndex).getStringCellValue());
+			Cell entry = rowIterator.next().getCell(colIndex);
+			if (entry != null)
+				colList.add(entry.getStringCellValue());
 		}
 		
 		return colList.toArray(new String[0]);

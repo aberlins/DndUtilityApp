@@ -152,29 +152,18 @@ public class RandUtils {
 		return name;
 	}
 	
-	public static Background randomBackground(Alignment alignment) throws FileNotFoundException, IOException, Exception
+	public static Background randomBackground(Alignment alignment) 
 	{
-		try (Scanner fileStream = new Scanner(new File(Background.backgroundFileName)))
-		{
-			ArrayList<String> backgroundList = new ArrayList<>();
-			while (fileStream.hasNextLine()) 
-			{
-				String [] line = fileStream.nextLine().split("=");
-				backgroundList.add(line[0]);
-			}
+		
+			String backgroundList [] = Background.getAllBackgrounds();
+			Background background = new Background(alignment, (int) (Math.random() * backgroundList.length));
 			
-			Background background = new Background(alignment, 
-					backgroundList.get((int)(Math.random() * backgroundList.size())));
-			
-			String backgroundFolder = IOUtils.getAttributeFolder(background.getName(), 
-					Background.backgroundFileName);
 			randomIdeal(background);
 			background.setBond(randomTraitEx(Background.backBondFileName, background.getBackgroundIndex()));
 			background.setFlaw(randomTraitEx(Background.backFlawFileName, background.getBackgroundIndex()));
-			background.setPersonalityTrait(randomTrait(backgroundFolder + "/personalityTraits.txt"));
+			background.setPersonalityTrait(randomTraitEx(Background.backPersonFileName, background.getBackgroundIndex()));
 			
 			return background;
-		}
 	}
 	
 	private static void randomIdeal(Background background) 

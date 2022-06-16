@@ -92,6 +92,7 @@ public class Main {
 		}
 		catch (Exception e) {
 			System.out.println("A formatting issue has occurred with the file: " + fileName);
+			e.printStackTrace();
 		}
 
 	}

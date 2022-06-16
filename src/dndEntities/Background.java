@@ -17,12 +17,20 @@ public class Background {
 	public static final String backFlawFileName = "backgrounds/Flaws.xlsx";
 	public static final String backIdealFileName = "backgrounds/Ideals.xlsx";
 	public static final String backAttFileName = "backgrounds/Attributes.xlsx";
+	public static final String backPersonFileName = "backgrounds/PersonalityTraits.xlsx";
 	
 	public Background (Alignment alignment, String name) 
 	{
 		this.alignment = alignment;
 		this.name = name;
 		this.backgroundIndex = findBackgroundIndex();
+		initalizeBackgroundAtts();
+	}
+	
+	public Background (Alignment alignment, int backgroundIndex) 
+	{
+		this.alignment = alignment;
+		this.backgroundIndex = backgroundIndex;
 		initalizeBackgroundAtts();
 	}
 
@@ -40,6 +48,7 @@ public class Background {
 	public int getBackgroundIndex() { return backgroundIndex; }
 
 	/*Simple Setters for all traits of the background*/
+	public void setName(String name) {this.name = name;}
 	public void setIdeal(String ideal) { this.ideal = ideal; }
 	public void setPersonalityTrait(String personalityTrait) { this.personalityTrait = personalityTrait; }
 	public void setBond(String bond) { this.bond = bond; }
@@ -79,108 +88,31 @@ public class Background {
 		return false;
 	}
 	
-	public boolean setPersonalityTrait(long persNum) 
-	{
-		String personalityTrait = setAttributeFromFile(persNum, "/personalityTraits.txt");
-		if (personalityTrait != null) {
-			this.personalityTrait = personalityTrait;
-			return true;
-		}
-		return false;
-	}
-	
-	public boolean setBond(long bondNum) 
-	{
-		String bond = setAttributeFromFile(bondNum, "/bonds.txt");
-		if (bond != null) {
-			this.bond = bond;
-			return true;
-		}
-		return false;
-	}
-	
-	public boolean setFlaw(long flawNum) 
-	{
-		String flaw = setAttributeFromFile(flawNum, "/flaws.txt");
-		if (flaw != null) {
-			this.flaw = flaw;
-			return true;
-		}
-		return false;
-	}
-	
 	private void initalizeBackgroundAtts() 
 	{
-		String fileName = null;
-		try {
-			fileName = IOUtils.getAttributeFolder(name, backgroundFileName);
-			if (fileName != null) 
-			{
-				fileName += "/attributes.txt";
-				try (Scanner fileStream = new Scanner(new File(fileName))) 
-				{
-					this.skillProficiences = fileStream.nextLine().split("=");
-					this.toolProficiences = fileStream.nextLine().split("=");
-					this.languages = fileStream.nextLine().split("=");
-					this.equipment = fileStream.nextLine().split("=");
-				}
+		if (backgroundIndex != -1) {
+			
+			String atts [] = IOUtils.getCol(backgroundIndex, backAttFileName);
+			
+			if (name == null) {
+				this.name = atts[0];
 			}
-		}
-		catch (FileNotFoundException e) 
-		{
-			System.out.println("An error has occured locating the files: " + fileName + ", " + backgroundFileName);
-		}
-		catch (IOException e) 
-		{
-			System.out.println("An error has occured when reading the files: " + fileName + ", " + backgroundFileName);
+			
+			this.skillProficiences = atts[1].split("=");
+			this.toolProficiences = atts[2].split("=");
+			this.languages = atts[3].split("=");
+			this.equipment = atts[4].split("=");
 		}
 	}
 	
-	private String setAttributeFromFile(long index, String fileExtension) 
+	public static String [] getAllBackgrounds() 
 	{
-		String fileName = null;
-		try {
-			fileName = IOUtils.getAttributeFolder(name, backgroundFileName);
-			if (fileName != null) 
-			{
-				fileName += fileExtension;
-				try (Scanner fileStream = new Scanner(new File(fileName))) 
-				{
-					int numOfOptions = Integer.parseInt(fileStream.nextLine());
-					if (index > numOfOptions)
-						return null;
-					else 
-					{
-						int currentLine = 1;
-						while (index != currentLine && fileStream.hasNextLine()) 
-						{
-							fileStream.nextLine(); currentLine++;
-						}
-						
-						if (fileStream.hasNextLine())
-							return fileStream.nextLine();
-					}
-				}
-			}
-		}
-		catch (FileNotFoundException e) 
-		{
-			System.out.println("An error has occured locating the files: " + fileName + ", " + backgroundFileName);
-		}
-		catch (IOException e) 
-		{
-			System.out.println("An error has occured when reading the files: " + fileName + ", " + backgroundFileName);
-		}
-		catch (NumberFormatException e)
-		{
-			System.out.println("Improper formatting with the file: " + fileName);
-		}
-		return null;
+		return IOUtils.getRow(0, backAttFileName);
 	}
 	
-	public int findBackgroundIndex() 
+	private int findBackgroundIndex() 
 	{
-		String backgroundlist [] = IOUtils.getRow(0, backAttFileName);
+		String backgroundlist [] = getAllBackgrounds();
 		
 		for (int i = 0; i < backgroundlist.length; i++) 
 		{
