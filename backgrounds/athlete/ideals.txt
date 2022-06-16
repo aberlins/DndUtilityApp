@@ -1,6 +1,0 @@
-Chaotic=Competition: I strive to test myself in all things.
-Evil=Triumph: The best part of winning is seeing my rivals brought low.
-Good=Camaraderie: The strongest bonds are forged through struggle.
-Neutral=People: I strive to inspire my spectators.
-Lawful=Tradition: Every game has rules, and the playing field must be level.
-Any=Growth: Lessons hide in victory and defeat.

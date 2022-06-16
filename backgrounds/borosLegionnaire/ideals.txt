@@ -1,6 +1,0 @@
-Any=Guild: My guild is all that really matters.
-Good=Justice: Achieving justice requires establishing fair, equitable, and compassionate relationships within a community.
-Good=Protection: It isn't right for innocents to suffer because of the arrogance of the powerful.
-Lawful=Solidarity: It is most crucial to act with a single will, marching side by side in perfect accord.
-Lawful=Order: Society functions only if people do their duty and respect the chain of command.
-Lawful=Conviction: Anything worth doing is worth doing with your whole heart.

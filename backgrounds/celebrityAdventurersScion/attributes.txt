@@ -1,4 +1,0 @@
-Perception=Performance
-Disguise Kit
-Any=Any
-Disguise kit=A Set of Fine Clothes=Belt Pouch Containing 30 gp(gold piece)

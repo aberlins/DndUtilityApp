@@ -1,4 +1,0 @@
-Animal Handling=Survival
-Land Vehicles
-Any
-A Whip=A Tent=A Regional Map=A Set of Traveling Clothes=Belt Pouch Containing 10 gp

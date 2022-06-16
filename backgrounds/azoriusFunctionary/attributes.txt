@@ -1,4 +1,0 @@
-Insight=Intimidation
-None
-Any=Any
-An Azorius Insignia=A Scroll Containing the Text of a Law Important to you=A Bottle of Blue Ink=A Pen=A Set of Fine Clothes=A Belt Pouch Containing 10 gp (Azorius-minted 1-zino coins)

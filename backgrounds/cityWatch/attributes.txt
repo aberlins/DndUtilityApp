@@ -1,4 +1,0 @@
-Athletics=Insight
-None
-Any=Any
-A Uniform in the Style of your Unit=Indicative of your Rank=Horn with which to Summon Help=A Set of Manacles=A Pouch Containing 10 gp

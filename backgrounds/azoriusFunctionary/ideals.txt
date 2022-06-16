@@ -1,6 +1,0 @@
-Any=Guild: My guild is all that really matters.
-Lawful=Order: The law is meant to ensure that the gears of society turn smoothly and quietly.
-Good=Peace: The ultimate object of the law is to remove violence from society.
-Lawful=Compliance: Coercion is a fine way of ensuring that the laws are obeyed.
-Lawful=Legislation: The law embodies excellence in its precision and detail.
-Evil=Punishment: A public display of consequences is an excellent deterrent for other criminals.

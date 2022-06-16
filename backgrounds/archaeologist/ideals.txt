@@ -1,6 +1,0 @@
-Good=Preservation: That artifact belongs in a museum.
-Any=Greed: I won't risk my life for nothing. I expect some kind of payment.
-Chaotic=Death Wish. Nothing is more exhilarating than a narrow escape from the jaws of death.
-Lawful=Dignity: The dead and their belongings deserve to be treated with respect.
-Any=Immortality: All my exploring is part of a plan to find the secret of everlasting life.
-Any=Danger: With every great discovery comes grave danger. The two walk hand in hand.

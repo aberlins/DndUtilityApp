@@ -1,4 +1,0 @@
-Deception=Sleight of Hand
-Disguise Kit=Forgery Kit
-None
-A Set of Fine Clothes=Disguise Kit=Tools of the Con of your Choice (Ten Stoppered Bottles filled with Colored Liquid, a Set of Weighted Dice, a Deck of Marked Cards, or a Signet Ring of an Imaginary Duke)=Belt Pouch Containing 15 gp.

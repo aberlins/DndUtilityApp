@@ -1,6 +1,0 @@
-Good=Greater Good: Our lot is to lay down our lives in defense of others.
-Lawful=Responsibility: I do what I must and obey just authority.
-Chaotic=Independence: When people follow orders blindly, they embrace a kind of tyranny.
-Evil=Might: In life as in war, the stronger force wins.
-Neutral=Live and Let Live: Ideals aren't worth killing over or going to war for.
-Any=Nation: My city, nation, or people are all that matter.

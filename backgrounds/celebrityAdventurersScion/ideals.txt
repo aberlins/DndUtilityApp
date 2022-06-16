@@ -1,6 +1,0 @@
-Evil=Power: The only way to get ahead in this world is to attain power and hold onto it with all your might.
-Lawful=Peace: Those who can find or make peace in the chaotic world around them have everything.
-Neutral=Fame: I've seen what fame can bring. And I'll do anything to get all that for myself.
-Any=Training: Hard work, sacrifice, and training lead to success—and eventually to perfection.
-Any=Anonymity: I want to be successful. And alone. With lots of guards and wards between me and everyone else in the world.
-Good=Wisdom: Material wealth is an illusion. Wisdom is the real treasure.

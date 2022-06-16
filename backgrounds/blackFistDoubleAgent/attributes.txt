@@ -1,4 +1,0 @@
-Deception=Insight
-Disguise Kit=One Type of Artisan’s Tools
-None
-Disguise Kit=Common Clothes=A Tears of Virulence Emblem=A Writ of Free Agency Signed by the Lord Regent=A Set of Artisan’s Tools you are Proficient With=A Pouch with 15 gp (payment for services rendered).
