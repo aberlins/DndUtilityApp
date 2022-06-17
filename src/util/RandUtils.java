@@ -59,40 +59,30 @@ public class RandUtils {
 		return hitPoint;
 	}
 	
-	/*Utility Method used to pick random traits from a list. For Example rolling a d100 to decide a random
-	trait from a list, or picking a random name out of a list of 500.
-	A filepath way to a text file with this list is given as input.
-	Each option is separated by a new line. Returned is a random trait picked from said list.*/
-	public static String randomTrait(String fileName) throws FileNotFoundException, IOException, Exception
+	/*Utility Method used to pick random traits from a list/file.
+	Depending on the file extension, this method will choose a random entry from a text file 
+	or a Excel file. 
+	Index number used for processing Excel files, does not matter for text files.*/
+	public static String randomTrait(String fileName, int index)
 	{
-		//Scanner object is attempted to be made from the file path given.
-		try (Scanner fileStream = new Scanner(new File(fileName)))
+		if (fileName.endsWith(".txt")) 
 		{
-			//Array meant to hold all values is allocated the proper memory.
-			//Counter variable is used to keep track of index.
-			long lineCount = IOUtils.getLineCount(fileName);
-			String [] traitArray = new String[(int)lineCount];
-			int counter = 0;
-					
-			//Fill Array
-			while (fileStream.hasNextLine()) 
-			{
-				traitArray[counter++] = fileStream.nextLine();
-			}
-					
+			String [] traitArray = IOUtils.getContentsFromtxt(fileName);
+			
 			//Return final result.
-			int dieRoll = (int)(Math.random() * lineCount);
+			int dieRoll = (int)(Math.random() * traitArray.length);
 			return traitArray[dieRoll];
 		}
-	}
-	
-	public static String randomTraitEx(String fileName, int index)
-	{
-		String attributes [] = IOUtils.getCol(index, fileName);
-		int numChoices = attributes.length - 1;
+		else if (fileName.endsWith(".xlsx")) 
+		{
+			String attributes [] = IOUtils.getCol(index, fileName);
+			int numChoices = attributes.length - 1;
+			
+			int dieRoll = (int)(Math.random() * numChoices) + 1;
+			return attributes[dieRoll];
+		}
 		
-		int dieRoll = (int)(Math.random() * numChoices) + 1;
-		return attributes[dieRoll];
+		return null;
 		
 	}
 	
@@ -133,22 +123,26 @@ public class RandUtils {
 	For now only Male and Female are available options for first names. */
 	public static String randomName(Race race, String gender) throws FileNotFoundException, IOException, Exception
 	{
-		String raceFolder = IOUtils.getAttributeFolder(race.getName(), Race.raceFileName);
+		String filePath = IOUtils.getAttributeFolder(race.getName(), Race.raceFileName);
 		
 		//First generate the first name depending on the gender
 		String name = null;
-		switch (gender) 
-		{
-			case "Male":
-				name = randomTrait(raceFolder + "/maleNames.txt");
-				break;
-			case "Female":
-				name = randomTrait(raceFolder + "/femaleNames.txt");
-				break;
+		
+		if (filePath != null) {
+			filePath += "/Names.xlsx";
+			switch (gender) 
+			{
+				case "Male":
+					name = randomTrait(filePath, 0);
+					break;
+				case "Female":
+					name = randomTrait(filePath, 1);
+					break;
+			}
+			//Add the last name to the value and then return it.
+			name += " " + randomTrait(filePath, 2);
 		}
 		
-		//Add the last name to the value and then return it.
-		name += " " + randomTrait(raceFolder + "/lastNames.txt");
 		return name;
 	}
 	
@@ -159,9 +153,9 @@ public class RandUtils {
 			Background background = new Background(alignment, (int) (Math.random() * backgroundList.length));
 			
 			randomIdeal(background);
-			background.setBond(randomTraitEx(Background.backBondFileName, background.getBackgroundIndex()));
-			background.setFlaw(randomTraitEx(Background.backFlawFileName, background.getBackgroundIndex()));
-			background.setPersonalityTrait(randomTraitEx(Background.backPersonFileName, background.getBackgroundIndex()));
+			background.setBond(randomTrait(Background.backBondFileName, background.getBackgroundIndex()));
+			background.setFlaw(randomTrait(Background.backFlawFileName, background.getBackgroundIndex()));
+			background.setPersonalityTrait(randomTrait(Background.backPersonFileName, background.getBackgroundIndex()));
 			
 			return background;
 	}

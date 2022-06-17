@@ -32,22 +32,43 @@ public class IOUtils {
 		return null;
 	}
 	
-	public static long getLineCount(String fileName) throws IOException
+	public static long getLineCount(String fileName)
 	{
 		try (LineNumberReader lineReader = new LineNumberReader(new FileReader(fileName)))
 		{
 			while ((lineReader.readLine()) != null);
 	        	return lineReader.getLineNumber();
 		}
-		catch (Exception e) {
+		catch (IOException e) {
+			System.out.println("Error reading the file: " + fileName);
 			return -1;
 		}
 	}
 	
-	public static int getEntryCount(String fileName) 
+	public static String [] getContentsFromtxt(String fileName) 
 	{
-		String entries;
-		return -1;
+		String traitArray [] = null;
+		
+		try (Scanner fileStream = new Scanner(new File(fileName)))
+		{
+			//Array meant to hold all values is allocated the proper memory.
+			//Counter variable is used to keep track of index.
+			long lineCount = getLineCount(fileName);
+			traitArray = new String[(int)lineCount];
+			int counter = 0;
+					
+			//Fill Array
+			while (fileStream.hasNextLine()) 
+			{
+				traitArray[counter++] = fileStream.nextLine();
+			}
+		
+		} 
+		catch (FileNotFoundException e) {
+			System.out.println("File, " + fileName + ", not found.");
+		}
+		
+		return traitArray;
 	}
 	
 	public static String getStartingPoint (Scanner fileStream, String attName) 

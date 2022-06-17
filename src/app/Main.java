@@ -82,13 +82,7 @@ public class Main {
 			System.out.println("Flaw is: " + background.getFlaw());
 			System.out.println("Ideals are: " + background.getIdeal());
 			System.out.println("Bonds are: " + background.getBond());
-			System.out.println("Random Trait is: " + RandUtils.randomTrait(fileName));
-		}
-		catch (FileNotFoundException e) {
-			System.out.println("Cannot locate the file: " + fileName);
-		}
-		catch (IOException e) {
-			System.out.println("Error opening/closing the file: " + fileName);
+			System.out.println("Random Trait is: " + RandUtils.randomTrait(fileName, -1));
 		}
 		catch (Exception e) {
 			System.out.println("A formatting issue has occurred with the file: " + fileName);
