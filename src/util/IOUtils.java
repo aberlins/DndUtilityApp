@@ -18,7 +18,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class IOUtils {
 	
 	public static String getAttributeFolder(String attributeName, String fileAttributeList) 
-			throws FileNotFoundException, IOException 
 	{
 		try (Scanner fileStream = new Scanner(new File(fileAttributeList)))
 		{
@@ -28,7 +27,13 @@ public class IOUtils {
 				if (attributeName.equals(line[0]))
 					return line[1];
 			}
+		} catch (FileNotFoundException e) {
+				System.out.println("File, " + fileAttributeList + ", not found.");
+		} catch (IOException e) {
+			System.out.println("Error reading the file: " + fileAttributeList);
 		}
+		
+		
 		return null;
 	}
 	

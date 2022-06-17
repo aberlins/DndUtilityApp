@@ -121,7 +121,7 @@ public class RandUtils {
 	
 	/*Utility Method used to generate a random name given the character's race and gender.
 	For now only Male and Female are available options for first names. */
-	public static String randomName(Race race, String gender) throws FileNotFoundException, IOException, Exception
+	public static String randomName(Race race, String gender)
 	{
 		String filePath = IOUtils.getAttributeFolder(race.getName(), Race.raceFileName);
 		
