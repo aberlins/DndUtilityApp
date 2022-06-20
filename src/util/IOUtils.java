@@ -33,7 +33,6 @@ public class IOUtils {
 			System.out.println("Error reading the file: " + fileAttributeList);
 		}
 		
-		
 		return null;
 	}
 	
@@ -115,8 +114,10 @@ public class IOUtils {
 		while (cellIterator.hasNext()) 
 		{
 			Cell entry = cellIterator.next();
-			if (entry != null)
+			if (entry != null) {
+				entry.setCellType(1);
 				rowList.add(entry.getStringCellValue());
+			}
 		}
 		
 		return rowList.toArray(new String[0]);
@@ -146,11 +147,27 @@ public class IOUtils {
 		while (rowIterator.hasNext()) 
 		{
 			Cell entry = rowIterator.next().getCell(colIndex);
-			if (entry != null)
+			if (entry != null) {
+				entry.setCellType(1);
 				colList.add(entry.getStringCellValue());
+			}
 		}
 		
 		return colList.toArray(new String[0]);
+	}
+	
+	public static int getIndex(String attributeName, String filePath) {
+		
+		String attributeList [] = getRow(0, filePath);
+		
+		for (int i = 0; i < attributeList.length; i++) 
+		{
+			if (attributeList[i].equalsIgnoreCase(attributeName)) {
+				return i;
+			}
+		}
+		
+		return -1;
 	}
 	
 }

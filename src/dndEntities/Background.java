@@ -23,7 +23,7 @@ public class Background {
 	{
 		this.alignment = alignment;
 		this.name = name;
-		this.backgroundIndex = findBackgroundIndex();
+		this.backgroundIndex = IOUtils.getIndex(name, backAttFileName);
 		initalizeBackgroundAtts();
 	}
 	
@@ -103,24 +103,5 @@ public class Background {
 			this.languages = atts[3].split("=");
 			this.equipment = atts[4].split("=");
 		}
-	}
-	
-	public static String [] getAllBackgrounds() 
-	{
-		return IOUtils.getRow(0, backAttFileName);
-	}
-	
-	private int findBackgroundIndex() 
-	{
-		String backgroundlist [] = getAllBackgrounds();
-		
-		for (int i = 0; i < backgroundlist.length; i++) 
-		{
-			if (backgroundlist[i].equalsIgnoreCase(name)) {
-				return i;
-			}
-		}
-		
-		return -1;
 	}
 }

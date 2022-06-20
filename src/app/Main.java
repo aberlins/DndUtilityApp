@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import dndEntities.Alignment;
 import dndEntities.Background;
+import dndEntities.DndClass;
 import dndEntities.Race;
 import util.RandUtils;
 
@@ -55,7 +56,7 @@ public class Main {
 		System.out.println("Ideals are: " + background.getIdeal());
 		System.out.println("Bonds are: " + background.getBond());
 		System.out.println("Random Trait is: " + trait);
-
+		
 	}
 	
 	private static class raceThread implements Runnable 
@@ -68,18 +69,7 @@ public class Main {
 			gender = RandUtils.randomGender();
 			dieSize = 6;
 			
-			try {
-				race = RandUtils.randomRace();
-			} catch (FileNotFoundException e1) {
-				System.out.println("Issue in finding the appropriate dnd race file.");
-				System.exit(1);
-			} catch (IOException e1) {
-				System.out.println("Issue in reading the appropriate dnd race file.");
-				System.exit(1);
-			} catch (Exception e1) {
-				System.out.println("An error has occured.");
-				System.exit(1);
-			}
+			race = RandUtils.randomRace();
 			
 			if (race != null)
 			{

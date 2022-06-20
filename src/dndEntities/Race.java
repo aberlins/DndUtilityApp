@@ -17,30 +17,39 @@ public class Race
 	
 	public Race(String raceName) 
 	{
-		String fileName = null;
-		try {
-			fileName = IOUtils.getAttributeFolder(raceName, raceFileName);
-			if (fileName != null) {
-				fileName += "/race.txt";
-				initializeRace(fileName, raceName);
-			}
-			else {
-				System.out.println("Race is not on the list.");
-			}
-		} 
-		catch (FileNotFoundException e) 
-		{ 	
-			System.out.println("An error has occured locating the files: " + fileName + ", " + raceFileName);
-		} 
-		catch (IOException e) 
-		{
-			System.out.println("An error has occured when reading the files: " + fileName + ", " + raceFileName);
-		} 
-		catch (NumberFormatException | NoSuchElementException e) 
-		{
-			System.out.println("Improper formating in the " + fileName + " detected.");
+		String filePath = IOUtils.getAttributeFolder(raceName, raceFileName);
+		if (filePath != null) {
+			filePath += "/Race.xlsx";
+			int raceIndex = IOUtils.getIndex(raceName, filePath);
+			String raceAttributes [] = IOUtils.getCol(raceIndex, filePath);
+			
+			name = raceAttributes[0];
+			
+			String [] line = raceAttributes[1].split("=");
+			abilityScoreIncr = new int [6];
+			int counter = 0;
+			for (String score: line) 
+				abilityScoreIncr[counter++] = Integer.parseInt(score);
+			
+			line = raceAttributes[2].split("=");
+			int numSpells = line.length / 3;
+			racialSpellsN = new String[numSpells];
+			numSpells = 0;
+			for (int i = 0; i < line.length - 1; i = i + 3) 
+				racialSpellsN[numSpells++] = line[i];
+			
+			line = raceAttributes[3].split("=");
+			abilities = new String[line.length];
+			System.arraycopy(line, 0, abilities, 0, abilities.length);
+			
+			maxAge = (int)Double.parseDouble(raceAttributes[4]); 
+			size = raceAttributes[5];
+			speed = (int)Double.parseDouble(raceAttributes[6]);
+			
+			line = raceAttributes[7].split("=");
+			raceLanguages = new String [line.length];
+			System.arraycopy(line, 0, raceLanguages, 0, raceLanguages.length);
 		}
-		
 	}
 	
 	/*Getters for all traits of the race*/
@@ -53,70 +62,4 @@ public class Race
 	public int getSpeed() { return speed; }
 	public int getMaxAge() { return maxAge; }
 
-	private void initializeRace (String fileName, String raceName) throws FileNotFoundException, IOException, NumberFormatException
-	{
-		try (Scanner fileStream = new Scanner(new File(fileName)))
-		{
-			String startPointS = IOUtils.getStartingPoint(fileStream, raceName); currentLine++;
-			
-				int startPoint = Integer.parseInt(startPointS);
-				
-				if (startPoint > 2) 
-				{
-					setEndTraits(false, fileStream);
-					setBeginningTrait(startPoint, fileStream);
-				}
-				else 
-				{
-					setBeginningTrait(startPoint, fileStream);
-					setEndTraits(true, fileStream);
-				}
-		}
-	}
-	
-	private void setEndTraits(boolean baseClass, Scanner fileStream) throws NumberFormatException, NoSuchElementException
-	{
-			if (baseClass == false) 
-			{
-				for (int i = 0; i < 4; i++) {
-					fileStream.nextLine(); currentLine++;
-				}
-			}
-		
-			maxAge = Integer.parseInt(fileStream.nextLine()); currentLine++;
-			size = fileStream.nextLine(); currentLine++;
-			speed = Integer.parseInt(fileStream.nextLine()); currentLine++;
-			
-			String [] line = fileStream.nextLine().split("="); currentLine++;
-			raceLanguages = new String [line.length];
-			System.arraycopy(line, 0, raceLanguages, 0, raceLanguages.length);
-			
-	}
-	
-	private void setBeginningTrait(int startPoint, Scanner fileStream) throws NumberFormatException, NoSuchElementException
-	{
-		while (startPoint != currentLine && fileStream.hasNextLine()) {
-			fileStream.nextLine(); currentLine++;
-		}
-			
-			name = fileStream.nextLine();
-			
-			String [] line = fileStream.nextLine().split("=");
-			abilityScoreIncr = new int [6];
-			int counter = 0;
-			for (String score: line) 
-				abilityScoreIncr[counter++] = Integer.parseInt(score);
-			
-			//Need to add to this in the future
-			line = fileStream.nextLine().split("=");
-			int numSpells = line.length / 3;
-			racialSpellsN = new String[numSpells];
-			numSpells = 0;
-			for (int i = 0; i < line.length - 1; i = i + 3) 
-				racialSpellsN[numSpells++] = line[i];
-			
-			line = fileStream.nextLine().split("=");
-			abilities = new String[line.length];
-			System.arraycopy(line, 0, abilities, 0, abilities.length);
-	}
 }

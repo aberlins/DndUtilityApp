@@ -149,7 +149,7 @@ public class RandUtils {
 	public static Background randomBackground(Alignment alignment) 
 	{
 		
-			String backgroundList [] = Background.getAllBackgrounds();
+			String backgroundList [] = IOUtils.getRow(0, Background.backAttFileName);
 			Background background = new Background(alignment, (int) (Math.random() * backgroundList.length));
 			
 			randomIdeal(background);
@@ -176,18 +176,16 @@ public class RandUtils {
 		}
 	}
 	
-	public static Race randomRace() throws FileNotFoundException, IOException, Exception
+	public static Race randomRace() 
 	{
-		try (Scanner fileStream = new Scanner(new File(Race.raceFileName)))
+		String raceContents [] = IOUtils.getContentsFromtxt(Race.raceFileName);
+		String raceList [] = new String[raceContents.length];
+		int counter = 0;
+		for (String raceName: raceContents) 
 		{
-			ArrayList<String> raceList = new ArrayList<>();
-			while (fileStream.hasNextLine()) 
-			{
-				String [] line = fileStream.nextLine().split("=");
-				raceList.add(line[0]);
-			}
-			return new Race(raceList.get((int)(Math.random() * raceList.size())));
+			raceList[counter++] = raceName.split("=")[0];
 		}
+		return new Race(raceList[(int)(Math.random() * raceList.length)]);
 	}
 	
 }
