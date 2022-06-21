@@ -1,8 +1,5 @@
 package app;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import dndEntities.Alignment;
 import dndEntities.Background;
 import dndEntities.DndClass;

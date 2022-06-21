@@ -1,16 +1,10 @@
 package util;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Scanner;
 
 import dndEntities.Alignment;
 import dndEntities.Background;
 import dndEntities.Race;
-
-import java.util.ArrayList;
 
 public class RandUtils {
 	

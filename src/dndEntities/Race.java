@@ -1,11 +1,6 @@
 package dndEntities;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Scanner;
-import util.IOUtils;
 
-import java.util.NoSuchElementException;
+import util.IOUtils;
 
 public class Race 
 {
