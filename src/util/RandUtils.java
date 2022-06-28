@@ -1,9 +1,11 @@
 package util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import dndEntities.Alignment;
 import dndEntities.Background;
+import dndEntities.DndClass;
 import dndEntities.Race;
 
 public class RandUtils {
@@ -180,6 +182,118 @@ public class RandUtils {
 			raceList[counter++] = raceName.split("=")[0];
 		}
 		return new Race(raceList[(int)(Math.random() * raceList.length)]);
+	}
+	
+	public static DndClass randomDndClass(Race race, Background background, int level) {
+		
+		String classList [] = IOUtils.getRow(0, DndClass.classStandFile);
+		String className = classList[(int) (Math.random() * classList.length)];
+		DndClass dndclass = new DndClass(race, background, className, level);
+		
+		String [] choiceFeatures = dndclass.getChoicesList();
+		
+		String [] skillBonusRules = choiceFeatures[1].split("=");
+		String [] listOfSkills = skillBonusRules[1].split("/");
+		dndclass.setSkillBonus(randomList(listOfSkills, Integer.parseInt(skillBonusRules[0])));
+		
+		dndclass.setWeapons(randomEquip(choiceFeatures[2].split("=")));
+		dndclass.setArmors(randomEquip(choiceFeatures[3].split("=")));
+		dndclass.setOtherItems(randomEquip(choiceFeatures[4].split("=")));
+		
+		return dndclass;
+		
+	}
+	
+	public static String [] randomList(String [] list, int numOfItems) 
+	{
+		String [] finalList = new String[numOfItems];
+		int index = 0;
+		
+		do
+		{
+			String item = list[(int) (Math.random() * list.length)];
+			boolean notInList = true;
+			for (int i = 0; i < numOfItems; i++) 
+			{
+				if (finalList[i] != null && finalList[i].equalsIgnoreCase(item)) 
+				{
+					notInList = false;
+					break;
+				}
+			}
+			
+			if (notInList)  {
+				finalList[index++] = item;
+			}
+			
+		} while (index < numOfItems);
+		
+		return finalList;
+	}
+	
+	//Flags for method:
+	// * - means check to see if character is proficient with item
+	// ! - means and or multiple items in String
+	// @ - means a certain number of the same item (ex: 2@Dagger is 2 daggers)
+	// ? - means string is a category of item and needs to be randomly selected.
+	private static String [] randomEquip(String [] list) 
+	{
+		ArrayList<String> finalList = new ArrayList<>();
+		
+		for (String items: list) 
+		{
+			boolean invalidChoice = true;
+			do 
+			{
+				String itemList [] = items.split("/");
+				String selectedItem = itemList[(int)(Math.random() * itemList.length)];
+			
+				if ((!(selectedItem.startsWith("*")) && (!finalList.contains(selectedItem)))) 
+				{
+					if (selectedItem.contains("!"))
+					{
+						itemList = selectedItem.split("!");
+						for (String newItems: itemList) 
+						{
+							finalList.add(newItems);
+						}
+					}
+					else 
+					{
+						finalList.add(selectedItem);
+					}
+					invalidChoice = false;
+				}
+			} while (invalidChoice);
+			
+		}
+		
+		ArrayList<String> removeItems = new ArrayList<>();
+		ArrayList<String> addItems = new ArrayList<>();
+		
+		for (String item: finalList) 
+		{
+			if (item.contains("@")) 
+			{
+				String [] multiItems = item.split("@");
+				removeItems.add(item);
+				for (int i = 0; i < Integer.parseInt(multiItems[0]); i++) 
+				{
+					addItems.add(multiItems[1]);
+				}
+			}
+		}
+		
+		for (String item: removeItems) 
+		{
+			finalList.remove(item);
+		}
+		for (String item: addItems) 
+		{
+			finalList.add(item);
+		}
+		
+		return finalList.toArray(new String[0]);
 	}
 	
 }

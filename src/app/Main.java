@@ -54,6 +54,9 @@ public class Main {
 		System.out.println("Bonds are: " + background.getBond());
 		System.out.println("Random Trait is: " + trait);
 		
+		DndClass dndclass = RandUtils.randomDndClass(race, background, level);
+		System.out.println("Class is: " + dndclass.getClassName());
+		
 	}
 	
 	private static class raceThread implements Runnable 

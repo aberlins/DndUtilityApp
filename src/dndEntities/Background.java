@@ -8,7 +8,6 @@ public class Background {
 	private int backgroundIndex;
 	private String name, ideal, personalityTrait, bond, flaw;
 	private String [] skillProficiences, toolProficiences, languages, equipment;
-	public static final String backgroundFileName = "backgrounds/backGroundPathway.txt";
 	public static final String backBondFileName = "backgrounds/Bonds.xlsx";
 	public static final String backFlawFileName = "backgrounds/Flaws.xlsx";
 	public static final String backIdealFileName = "backgrounds/Ideals.xlsx";
