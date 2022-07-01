@@ -3,6 +3,7 @@ package app;
 import dndEntities.Alignment;
 import dndEntities.Background;
 import dndEntities.DndClass;
+import dndEntities.Gender;
 import dndEntities.Race;
 import util.RandUtils;
 
@@ -10,7 +11,8 @@ public class Main {
 
 	private static int stats [];
 	private static final String [] abilityNames = {"Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"};
-	private static String name, trait, gender;
+	private static String name, trait;
+	private static Gender gender;
 	private static Race race;
 	private static Alignment align;
 	private static Background background;
@@ -56,6 +58,7 @@ public class Main {
 		
 		DndClass dndclass = RandUtils.randomDndClass(race, background, level);
 		System.out.println("Class is: " + dndclass.getClassName());
+		System.out.println("Archetype is: " + dndclass.getPathTitle());
 		
 	}
 	

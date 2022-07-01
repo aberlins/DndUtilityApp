@@ -7,7 +7,7 @@ public class Background {
 	private Alignment alignment;
 	private int backgroundIndex;
 	private String name, ideal, personalityTrait, bond, flaw;
-	private String [] skillProficiences, toolProficiences, languages, equipment;
+	private String [] skillProficiences, toolProficiences, languages, equipment, idealList;
 	public static final String backBondFileName = "backgrounds/Bonds.xlsx";
 	public static final String backFlawFileName = "backgrounds/Flaws.xlsx";
 	public static final String backIdealFileName = "backgrounds/Ideals.xlsx";
@@ -19,6 +19,8 @@ public class Background {
 		this.alignment = alignment;
 		this.name = name;
 		this.backgroundIndex = IOUtils.getIndex(name, backAttFileName);
+		this.idealList = this.backgroundIndex != -1 ?
+				IOUtils.getCol(backgroundIndex, backIdealFileName) : null;
 		initalizeBackgroundAtts();
 	}
 	
@@ -26,6 +28,8 @@ public class Background {
 	{
 		this.alignment = alignment;
 		this.backgroundIndex = backgroundIndex;
+		this.idealList = this.backgroundIndex != -1 ?
+				IOUtils.getCol(backgroundIndex, backIdealFileName) : null;
 		initalizeBackgroundAtts();
 	}
 
@@ -48,7 +52,9 @@ public class Background {
 	public void setPersonalityTrait(String personalityTrait) { this.personalityTrait = personalityTrait; }
 	public void setBond(String bond) { this.bond = bond; }
 	public void setFlaw(String flaw) { this.flaw = flaw; }
-	
+	public void setToolProficiences(String[] toolProficiences) { this.toolProficiences = toolProficiences; }
+	public void setEquipment(String[] equipment) { this.equipment = equipment; }
+
 	public void setLanguages(String [] languages) 
 	{ 
 		int index = 0;
@@ -61,14 +67,9 @@ public class Background {
 	
 	public boolean setIdeal(int idealNum) 
 	{
-		String idealList [] = null;
 		String ideal [] = null;
 		
-		if(backgroundIndex != -1) 
-		{
-			idealList = IOUtils.getCol(backgroundIndex, backIdealFileName);
-			
-			if (idealList != null) 
+			if (this.idealList != null) 
 			{
 				ideal = idealList[idealNum].split("=");
 				if (ideal[0].equalsIgnoreCase("Any") || alignment.getGEAxis().equalsIgnoreCase(ideal[0])
@@ -78,7 +79,6 @@ public class Background {
 					return true;
 				}
 			}
-		}
 		
 		return false;
 	}

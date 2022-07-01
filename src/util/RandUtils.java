@@ -6,6 +6,7 @@ import java.util.Arrays;
 import dndEntities.Alignment;
 import dndEntities.Background;
 import dndEntities.DndClass;
+import dndEntities.Gender;
 import dndEntities.Race;
 
 public class RandUtils {
@@ -87,9 +88,8 @@ public class RandUtils {
 	{
 		//Get all the values from the alignment enum as well as the total size 
 		Alignment [] alignVals = Alignment.values();
-		int size = alignVals.length;
 		
-		return alignVals[(int)(Math.random() * size)];
+		return alignVals[(int)(Math.random() * alignVals.length)];
 	}
 	
 	/* Utility Method used to return a random age given the max age of a race.*/
@@ -98,26 +98,22 @@ public class RandUtils {
 		return (int)(Math.random() * maxAge) + 1;
 	}
 	
+	
 	/* Utility method used to return a random gender for a character.
 	As of now only male and female are available.*/
-	public static String randomGender() 
+	public static Gender randomGender() 
 	{
-		int genNum = (int)(Math.random() * 2) + 1;
 		
-		switch(genNum) 
-		{
-			case 1:
-				return "Male";
-			case 2:
-				return "Female";
-			default:
-				return null;
-		}
+		//Get all the values from the gender enum as well as the total size 
+		Gender [] genderVals = Gender.values();
+		
+		return genderVals[(int)(Math.random() * genderVals.length)];
+		
 	}
 	
 	/*Utility Method used to generate a random name given the character's race and gender.
 	For now only Male and Female are available options for first names. */
-	public static String randomName(Race race, String gender)
+	public static String randomName(Race race, Gender gender)
 	{
 		String filePath = IOUtils.getAttributeFolder(race.getName(), Race.raceFileName);
 		
@@ -128,10 +124,10 @@ public class RandUtils {
 			filePath += "/Names.xlsx";
 			switch (gender) 
 			{
-				case "Male":
+				case MALE:
 					name = randomTrait(filePath, 0);
 					break;
-				case "Female":
+				case FEMALE:
 					name = randomTrait(filePath, 1);
 					break;
 			}
@@ -152,6 +148,30 @@ public class RandUtils {
 			background.setBond(randomTrait(Background.backBondFileName, background.getBackgroundIndex()));
 			background.setFlaw(randomTrait(Background.backFlawFileName, background.getBackgroundIndex()));
 			background.setPersonalityTrait(randomTrait(Background.backPersonFileName, background.getBackgroundIndex()));
+			
+			String oldToolProf [] = background.getToolProficiences();
+			String newToolProf;
+			
+			for (int i = 0; i < oldToolProf.length; i++) 
+			{
+				if (oldToolProf[i].startsWith("*")) 
+				{
+					newToolProf = randomToolProf(oldToolProf[i].substring(1));
+					String [] equip = background.getEquipment();
+					for (int j = 0; j < equip.length; j++) 
+					{
+						if (equip[j].equalsIgnoreCase(oldToolProf[i])) 
+						{
+							equip[j] = newToolProf;
+							background.setEquipment(equip);
+							break;
+						}
+					}
+					oldToolProf[i] = newToolProf;
+				}
+			}
+			
+			background.setToolProficiences(oldToolProf);
 			
 			return background;
 	}
@@ -199,6 +219,13 @@ public class RandUtils {
 		dndclass.setWeapons(randomEquip(choiceFeatures[2].split("=")));
 		dndclass.setArmors(randomEquip(choiceFeatures[3].split("=")));
 		dndclass.setOtherItems(randomEquip(choiceFeatures[4].split("=")));
+		
+		String [] archetypeChoices = choiceFeatures[5].split("=");
+		if (!(archetypeChoices[0].equalsIgnoreCase("None"))) {
+			String [] archetypes = IOUtils.getRow(0, archetypeChoices[1]);
+			dndclass.setPathTitle(archetypeChoices[0] + " " + 
+				archetypes[(int)(Math.random() * archetypes.length - 1) + 1]);
+		}
 		
 		return dndclass;
 		
@@ -294,6 +321,13 @@ public class RandUtils {
 		}
 		
 		return finalList.toArray(new String[0]);
+	}
+	
+	private static String randomToolProf (String toolType) 
+	{
+		int toolIndex = IOUtils.getIndex(toolType, IOUtils.toolTypeFile);
+		String [] tools = IOUtils.getCol(toolIndex, IOUtils.toolTypeFile);
+		return tools[(int)(Math.random() * tools.length - 1) + 1];
 	}
 	
 }

@@ -6,10 +6,10 @@ import util.IOUtils;
 
 public class DndClass {
 	
-	private String className, castingAbility;
+	private String className, castingAbility, pathTitle;
 	private int hitDie, proBonus;
 	private String [] armorPro, weaponPro, toolPro, savingThrows, skillBonus, 
-		armors, weapons, otherItems, spells, features, pathTitles, choicesList;
+		armors, weapons, otherItems, spells, features, choicesList;
 	public static final String classFileName = "classes/classPathway.txt";
 	public static final String classStandFile = "classes/StandardFeatures.xlsx";
 	public static final String classChoiceFile = "classes/ChoiceFeatures.xlsx";
@@ -28,10 +28,12 @@ public class DndClass {
 	public String[] getWeapons() { return weapons; }
 	public String[] getArmors() { return armors; }
 	public String[] getOtherItems() { return otherItems; }
+	public String getPathTitle() { return pathTitle; }
 
 	public void setWeapons (String [] weapons) { this.weapons = weapons; }
 	public void setArmors(String[] armors) { this.armors = armors; }
 	public void setOtherItems(String[] otherItems) { this.otherItems = otherItems; }
+	public void setPathTitle(String pathTitle) { this.pathTitle = pathTitle; }
 
 	public boolean setSkillBonus(String[] skillBonus) 
 	{
