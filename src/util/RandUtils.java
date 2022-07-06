@@ -204,7 +204,7 @@ public class RandUtils {
 		return new Race(raceList[(int)(Math.random() * raceList.length)]);
 	}
 	
-	public static DndClass randomDndClass(Race race, Background background, int level) {
+	public static DndClass randomDndClass(Race race, Background background, int level, int [] stats) {
 		
 		String classList [] = IOUtils.getRow(0, DndClass.classStandFile);
 		String className = classList[(int) (Math.random() * classList.length)];
@@ -221,10 +221,21 @@ public class RandUtils {
 		dndclass.setOtherItems(randomEquip(choiceFeatures[4].split("=")));
 		
 		String [] archetypeChoices = choiceFeatures[5].split("=");
-		if (!(archetypeChoices[0].equalsIgnoreCase("None"))) {
-			String [] archetypes = IOUtils.getRow(0, archetypeChoices[1]);
-			dndclass.setPathTitle(archetypeChoices[0] + " " + 
-				archetypes[(int)(Math.random() * archetypes.length - 1) + 1]);
+		
+		int archetypeLevel = (int)Double.parseDouble(archetypeChoices[0]);
+		
+		if (archetypeLevel != 0 && level >= archetypeLevel) {
+			String [] archetypes = IOUtils.getRow(0, archetypeChoices[2]);
+			int archetypePos = (int)(Math.random() * archetypes.length - 1) + 1;
+			dndclass.setPathTitle(archetypeChoices[1] + " " + 
+				archetypes[archetypePos]);
+		}
+		
+		if (dndclass.getSpells() != null && dndclass.getCastingAbilityPos() != -1) {
+			
+				dndclass.setSpells(
+					randomSpells(dndclass.getSpells(), dndclass.getSpellSlots(), dndclass.getSpellListFilePath(),
+							level, stats[dndclass.getCastingAbilityPos()], dndclass.getSpellsKnown()));
 		}
 		
 		return dndclass;
@@ -328,6 +339,62 @@ public class RandUtils {
 		int toolIndex = IOUtils.getIndex(toolType, IOUtils.toolTypeFile);
 		String [] tools = IOUtils.getCol(toolIndex, IOUtils.toolTypeFile);
 		return tools[(int)(Math.random() * tools.length - 1) + 1];
+	}
+	
+	private static ArrayList<String> [] randomSpells(ArrayList<String> [] spells, int [] spellSlots, String spellListFilePath, 
+			int level, int castingAbility, int spellsKnown) 
+	{
+		int numberOfSpells;
+		if (spellsKnown != -1) {
+			numberOfSpells = spellsKnown;
+		}
+		else {
+			numberOfSpells = spellsKnown;
+			int modifer = castingAbility > 9 ? (castingAbility - 10)/2 : 0;
+			numberOfSpells = level + modifer;
+		}
+		
+		int maxLevelSpell = spellSlots.length;
+		
+		String spellList [][] = new String [maxLevelSpell][];
+		
+		//Get spells available to cast
+		for (int i = 0; i < maxLevelSpell; i++) 
+		{
+			spellList[i] = IOUtils.getCol(i, spellListFilePath);
+		}
+		
+		//Set cantrips
+		for (int i = 0; i < spellSlots[0]; i++) 
+		{
+			do 
+			{
+				String spell = spellList[0][(int)(Math.random() * spellList[0].length - 1) + 1];
+				if (!(spells[0].contains(spell))) 
+				{
+					spells[0].add(spell);
+					break;
+				}
+			} while (true);
+		}
+		
+		//Set other spells
+		for (int i = 0; i < numberOfSpells; i++) 
+		{
+			do {
+				int randomSpellLevel = (int)((Math.random() * (maxLevelSpell - 1))) + 1;
+				
+				String spell = spellList[randomSpellLevel][(int)(Math.random() * spellList[randomSpellLevel].length - 1) + 1];
+				
+				if (!(spells[randomSpellLevel].contains(spell))) 
+				{
+					spells[randomSpellLevel].add(spell);
+					break;
+				}
+				
+			} while (true);
+		}
+		return spells;
 	}
 	
 }

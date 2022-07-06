@@ -1,10 +1,13 @@
 package app;
 
+import java.util.ArrayList;
+
 import dndEntities.Alignment;
 import dndEntities.Background;
 import dndEntities.DndClass;
 import dndEntities.Gender;
 import dndEntities.Race;
+import util.IOUtils;
 import util.RandUtils;
 
 public class Main {
@@ -56,10 +59,29 @@ public class Main {
 		System.out.println("Bonds are: " + background.getBond());
 		System.out.println("Random Trait is: " + trait);
 		
-		DndClass dndclass = RandUtils.randomDndClass(race, background, level);
+		DndClass dndclass = RandUtils.randomDndClass(race, background, level, stats);
 		System.out.println("Class is: " + dndclass.getClassName());
 		System.out.println("Archetype is: " + dndclass.getPathTitle());
 		
+		ArrayList<String> [] spellx = dndclass.getSpells();
+		if (spellx != null) 
+		{
+			int counter = 0;
+			for (ArrayList<String> spellLevel: spellx) 
+			{
+				System.out.print("Spell Level " + counter++ + ": ");
+				for (String spell: spellLevel) 
+				{
+					System.out.print(spell + ", ");
+				}
+				System.out.println("");
+			}
+		}
+		
+		String test [] = IOUtils.getCol(70, DndClass.classChoiceFile);
+		for (String t: test) {
+			System.out.println(t);
+		}
 	}
 	
 	private static class raceThread implements Runnable 
@@ -102,7 +124,7 @@ public class Main {
 
 		@Override
 		public void run() {
-			level = 2;
+			level = 3;
 			align = RandUtils.randomAlignment();
 			background = RandUtils.randomBackground(align);
 			
