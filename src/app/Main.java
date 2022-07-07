@@ -19,11 +19,13 @@ public class Main {
 	private static Race race;
 	private static Alignment align;
 	private static Background background;
-	private static int age, level, dieSize, conMod, hitPoints;
+	private static int age, level, conMod, hitPoints;
 	
 	
 	public static void main(String[] args) 
 	{
+		
+		level = RandUtils.randomLevel();
 		
 		Thread race_Thread = new Thread(new raceThread());
 		Thread background_Thread = new Thread(new backgroundThread());
@@ -39,16 +41,20 @@ public class Main {
 			e.printStackTrace();
 		}
 		
+		DndClass dndclass = RandUtils.randomDndClass(race, background, level, stats);
+		hitPoints = RandUtils.rollHitPoints(dndclass.getHitDie(), level, conMod);
+		stats = RandUtils.ranomdAbilityScoreImprov(level, stats);
+		
 		System.out.println("Name is: " + name);
 		System.out.println("Gender is: " + gender);
 		System.out.println("Race is: " + race.getName());
 		System.out.println("Age is: " + age);
+		System.out.println("Level is: " + level);
 		System.out.println("This new Character's base stat rolls are: ");
 		for (int i = 0; i < 6; i++) 
 		{
 			System.out.println(abilityNames[i] + ": \t" + stats[i]);
 		}
-		System.out.println("Level is: " + level);
 		System.out.println("Alignment is: " + align);
 		System.out.println("Hit Points are: " + 
 				hitPoints);
@@ -59,7 +65,6 @@ public class Main {
 		System.out.println("Bonds are: " + background.getBond());
 		System.out.println("Random Trait is: " + trait);
 		
-		DndClass dndclass = RandUtils.randomDndClass(race, background, level, stats);
 		System.out.println("Class is: " + dndclass.getClassName());
 		System.out.println("Archetype is: " + dndclass.getPathTitle());
 		
@@ -77,11 +82,6 @@ public class Main {
 				System.out.println("");
 			}
 		}
-		
-		String test [] = IOUtils.getCol(70, DndClass.classChoiceFile);
-		for (String t: test) {
-			System.out.println(t);
-		}
 	}
 	
 	private static class raceThread implements Runnable 
@@ -92,9 +92,8 @@ public class Main {
 		{
 			stats = RandUtils.rollCharacterStats();
 			gender = RandUtils.randomGender();
-			dieSize = 6;
 			
-			race = RandUtils.randomRace();
+			race = RandUtils.randomRace(level);
 			
 			if (race != null)
 			{
@@ -111,8 +110,6 @@ public class Main {
 			
 			conMod = (stats[2] - 10)/2;
 			
-			hitPoints = RandUtils.rollHitPoints(dieSize, level, conMod);
-			
 			String fileName = "races/aasimar/traits.txt";
 			trait = RandUtils.randomTrait(fileName, -1);
 		}
@@ -124,12 +121,11 @@ public class Main {
 
 		@Override
 		public void run() {
-			level = 3;
 			align = RandUtils.randomAlignment();
 			background = RandUtils.randomBackground(align);
 			
 		}
 		
 	}
-
+	
 }

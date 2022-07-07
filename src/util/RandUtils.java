@@ -11,6 +11,11 @@ import dndEntities.Race;
 
 public class RandUtils {
 	
+	/*Utility Method used to roll a random level between 1 and 20*/
+	public static int randomLevel() {
+		return (int)(Math.random() * 20) + 1;
+	}
+	
 	/*Utility Method used to roll up character's stats.
 	Is done randomly not using a point base system.
 	Value returned is an int array with the values corresponding to
@@ -54,6 +59,54 @@ public class RandUtils {
 			hitPoint += (int)(Math.random() * dieSize) + 1 + conMod;
 		}
 		return hitPoint;
+	}
+	
+	public static int [] ranomdAbilityScoreImprov (int level, int [] abilityScores) 
+	{
+		do {
+			if (level == 19 || (level % 4 == 0 && level != 0 && level != 20)) 
+			{
+				int randomMode = (int)(Math.random() * 2);
+				
+				int randomAbility = -1;
+				do {
+					randomAbility = (int)(Math.random() * 6);
+					if (abilityScores[randomAbility] != 20) {
+						break;
+					}
+				} while (true);
+				
+				if (randomMode == 1 && abilityScores[randomAbility] < 19) 
+				{
+					abilityScores[randomAbility] += 2;
+				}
+				else 
+				{
+					int randomAbility2 = -1;
+					do {
+						randomAbility2 = (int)(Math.random() * 6);
+					} while (randomAbility == randomAbility2 || abilityScores[randomAbility2] == 20);
+					
+					abilityScores[randomAbility] += 1;
+					abilityScores[randomAbility2] += 1;
+				}
+				if (level > 19) {
+					level--;
+				}
+				else { 
+					level -= 4;
+				}
+			}
+			else if (level > 0) {
+				level--;
+			}
+			else {
+				break;
+			}
+			
+		} while (true);
+		
+		return abilityScores;
 	}
 	
 	/*Utility Method used to pick random traits from a list/file.
@@ -115,13 +168,12 @@ public class RandUtils {
 	For now only Male and Female are available options for first names. */
 	public static String randomName(Race race, Gender gender)
 	{
-		String filePath = IOUtils.getAttributeFolder(race.getName(), Race.raceFileName);
+		String filePath = race.getRacialNameFilePath();
 		
 		//First generate the first name depending on the gender
 		String name = null;
 		
 		if (filePath != null) {
-			filePath += "/Names.xlsx";
 			switch (gender) 
 			{
 				case MALE:
@@ -137,7 +189,7 @@ public class RandUtils {
 		
 		return name;
 	}
-	
+		
 	public static Background randomBackground(Alignment alignment) 
 	{
 		
@@ -192,16 +244,10 @@ public class RandUtils {
 		}
 	}
 	
-	public static Race randomRace() 
+	public static Race randomRace(int level) 
 	{
-		String raceContents [] = IOUtils.getContentsFromtxt(Race.raceFileName);
-		String raceList [] = new String[raceContents.length];
-		int counter = 0;
-		for (String raceName: raceContents) 
-		{
-			raceList[counter++] = raceName.split("=")[0];
-		}
-		return new Race(raceList[(int)(Math.random() * raceList.length)]);
+		String raceList [] = IOUtils.getRow(0, Race.raceFileName);
+		return new Race((int)(Math.random() * raceList.length), level);
 	}
 	
 	public static DndClass randomDndClass(Race race, Background background, int level, int [] stats) {
@@ -226,9 +272,16 @@ public class RandUtils {
 		
 		if (archetypeLevel != 0 && level >= archetypeLevel) {
 			String [] archetypes = IOUtils.getRow(0, archetypeChoices[2]);
-			int archetypePos = (int)(Math.random() * archetypes.length - 1) + 1;
+			int archetypePos = (int)(Math.random() * archetypes.length);
 			dndclass.setPathTitle(archetypeChoices[1] + " " + 
 				archetypes[archetypePos]);
+			boolean completeSpellList = dndclass.setArchetypeTraits(archetypeChoices[2], archetypePos);
+			
+			if (completeSpellList == false) 
+			{
+				dndclass.setSpells(finalizeSpells(dndclass.getSpells()));
+			}
+			
 		}
 		
 		if (dndclass.getSpells() != null && dndclass.getCastingAbilityPos() != -1) {
@@ -350,7 +403,7 @@ public class RandUtils {
 		}
 		else {
 			numberOfSpells = spellsKnown;
-			int modifer = castingAbility > 9 ? (castingAbility - 10)/2 : 0;
+			int modifer = castingAbility > 9 ? MathUtils.getAbilityModifer(castingAbility) : 0;
 			numberOfSpells = level + modifer;
 		}
 		
@@ -394,6 +447,35 @@ public class RandUtils {
 				
 			} while (true);
 		}
+		return spells;
+	}
+	
+	private static ArrayList<String> [] finalizeSpells(ArrayList<String> [] spells) 
+	{
+		int counter = 0;
+		for (ArrayList<String> spellLevelList : spells) 
+		{
+			for (String spell: spellLevelList) 
+			{
+				if (spell.startsWith("*")) 
+				{
+					String filePath = spell.substring(1);
+					String spellList [] = IOUtils.getCol(counter, filePath);
+					int index = spellLevelList.indexOf(spell);
+					
+					do {
+						String newSpell = spellList[(int)(Math.random() * spellList.length - 1) + 1];
+					
+						if (!(spellLevelList.contains(newSpell))) {
+							spellLevelList.set(index, newSpell);
+							break;
+						}
+					} while (true);
+				}
+			}
+			counter++;
+		}
+		
 		return spells;
 	}
 	

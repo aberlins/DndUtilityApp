@@ -7,19 +7,24 @@ import util.IOUtils;
 public class DndClass {
 	
 	private String className, castingAbility, pathTitle, spellListFilePath;
-	private int hitDie, proBonus, castingAbilityPos, spellsKnown;
+	private int hitDie, proBonus, castingAbilityPos, spellsKnown, level;
 	private String [] armorPro, weaponPro, toolPro, savingThrows, skillBonus, 
 		armors, weapons, otherItems, features, choicesList;
 	private ArrayList<String> [] spells;
 	private int [] spellSlots;
+	private Race race;
+	private Background background;
 	public static final String classFileName = "classes/classPathway.txt";
 	public static final String classStandFile = "classes/StandardFeatures.xlsx";
 	public static final String classChoiceFile = "classes/ChoiceFeatures.xlsx";
 	
 	public DndClass(Race race, Background background, String className, int level) 
 	{
+		this.race = race;
+		this.background = background;
 		this.className = className;
-		int classIndex = initilizeStandardFeatures(level);
+		this.level = level;
+		int classIndex = initilizeStandardFeatures();
 		this.choicesList = IOUtils.getCol(classIndex, classChoiceFile);
 	}
 	
@@ -37,6 +42,11 @@ public class DndClass {
 	public String getCastingAbility() { return castingAbility; }
 	public int getCastingAbilityPos() { return castingAbilityPos; }
 	public int getSpellsKnown() { return spellsKnown; }
+	public int getHitDie() { return hitDie; }
+	public Race getRace() { return race; }
+	public Background getBackground() { return background; }
+	public int getLevel() { return level; }
+	public String[] getSavingThrows() { return savingThrows; }
 
 	public void setWeapons (String [] weapons) { this.weapons = weapons; }
 	public void setArmors(String[] armors) { this.armors = armors; }
@@ -73,10 +83,12 @@ public class DndClass {
 		return true;
 	}
 	
-	public void setBonusSpells (String filePath, int level) 
+	public boolean setBonusSpells (String filePath) 
 	{
 		ArrayList<String []> spellInfo = new ArrayList<>();
 		int counter = 0;
+		
+		boolean completeSpellList = true;
 		
 		do {
 			String [] col = IOUtils.getCol(counter++, filePath);
@@ -99,19 +111,25 @@ public class DndClass {
 				String [] bonusSpells = spellSection[i].split("=");
 				for (String spell: bonusSpells) 
 				{
-					spells[counter].add(spell);
+					if (!(spell.equals("-"))) 
+					{
+						spells[counter].add(spell);
+						if (spell.startsWith("*"))
+							completeSpellList = false;
+					}
 				}
 				counter++;
 			}
 		}
 		
+		return completeSpellList;
+		
 	}
 
-	//Returns instructions for setting spells if the archetype gives spell casting
-	public String [] setArchetypeTraits(int level, String filePath, int archetypePos) 
+	public boolean setArchetypeTraits(String filePath, int archetypePos) 
 	{
-		String [] results = null;
 		String [] archetypeInfo = IOUtils.getCol(archetypePos, filePath);
+		boolean completeSpellList = true;
 		
 		if (!(archetypeInfo[1].equalsIgnoreCase("None"))) 
 			this.armorPro = updateList(archetypeInfo[1].split("="), this.armorPro);
@@ -125,29 +143,38 @@ public class DndClass {
 		if (!(archetypeInfo[4].equalsIgnoreCase("None")))
 			this.skillBonus = updateList(archetypeInfo[4].split("="), this.skillBonus);
 		
-		String [] bonusSpellList = archetypeInfo[5].split("=");
-		if (bonusSpellList[0].equalsIgnoreCase("true")) 
-		{
-			setBonusSpells(bonusSpellList[1], level);
-		}
-		
 		String [] newCastingList = archetypeInfo[6].split("=");
 		if (newCastingList[0].equalsIgnoreCase("true")) 
 		{
-			results = newCastingList;
+			initilizeSpellCastingTraits(newCastingList);
+		}
+		
+		String [] bonusSpellList = archetypeInfo[5].split("=");
+		if (bonusSpellList[0].equalsIgnoreCase("true")) 
+		{
+			completeSpellList = setBonusSpells(bonusSpellList[1]);
 		}
 		
 		this.features = updateList(archetypeInfo[7].split("="), this.features);
 		
-		return results;
+		return completeSpellList;
+		
+	}
+	
+	private void initilizeSpellCastingTraits(String [] spellCastingTraitList) 
+	{
+		setCastingAbilityPos(spellCastingTraitList[1]);
+		this.spellListFilePath = spellCastingTraitList[3];
+		char preparedOrKnownCaster = spellCastingTraitList[4].toUpperCase().charAt(0);
+		setSpellsAndSlots(spellCastingTraitList[2], preparedOrKnownCaster);
 	}
 	
 	
-	private int initilizeStandardFeatures(int level) 
+	private int initilizeStandardFeatures() 
 	{
 		int classIndex = IOUtils.getIndex(className, classStandFile);
 		String featuresList [] = IOUtils.getCol(classIndex, classStandFile);
-		proBonus = getProBonus(featuresList[1], level);
+		proBonus = getProBonus(featuresList[1]);
 		hitDie = (int)Double.parseDouble(featuresList[2]);
 		armorPro = featuresList[3].split("=");
 		weaponPro = featuresList[4].split("=");
@@ -156,19 +183,16 @@ public class DndClass {
 		
 		String spellList [] = featuresList[7].split("=");
 		if (spellList[0].equalsIgnoreCase("true")) {
-			setCastingAbilityPos(spellList[1]);
-			this.spellListFilePath = spellList[3];
-			char preparedOrKnownCaster = spellList[4].toUpperCase().charAt(0);
-			setSpellsAndSlots(spellList[2], level, preparedOrKnownCaster);
+			initilizeSpellCastingTraits(spellList);
 		}
 		
-		features = setFeatures(featuresList[8], level);
+		features = setFeatures(featuresList[8]);
 		
 		return classIndex;
 		
 	}
 	
-	private int getProBonus(String line, int level) 
+	private int getProBonus(String line) 
 	{
 		String proList [] = line.split("=");
 		for (String levelPro: proList) 
@@ -180,7 +204,7 @@ public class DndClass {
 		return -1;
 	}
 	
-	private String [] setFeatures(String line, int level) 
+	private String [] setFeatures(String line) 
 	{
 		ArrayList<String> tempFeatures = new ArrayList<>();
 		String featList [] = line.split("=");
@@ -216,7 +240,7 @@ public class DndClass {
 		}
 	}
 	
-	private void setSpellsAndSlots(String filepath, int level, char preparedOrKnownCaster) 
+	private void setSpellsAndSlots(String filepath, char preparedOrKnownCaster) 
 	{
 		String [] spellInfo = IOUtils.getCol(level - 1, filepath);
 		this.spellSlots = new int [spellInfo.length - 2];
