@@ -53,7 +53,7 @@ public class MathUtils
 		return savingThrowScores;
 	}
 	
-	public static int [] getTotalSkillScores(int [] abilityScores, int proBonus, String [] skillBonus) 
+	public static int [] getSkillScores(int [] abilityScores, int proBonus, String [] skillBonus) 
 	{
 		String[] skillNames = CharacterSheet.skillNames;
 		int[] skillScores = new int [skillNames.length];
@@ -68,11 +68,13 @@ public class MathUtils
 		{
 			int counter = 0;
 			do {
+				
 				if(skillBonus[i].equalsIgnoreCase(skillNames[counter])) 
 				{
 					addProBonus[counter++] = true;
 					break;
 				}
+				counter++;
 				
 			} while (true);
 		}
@@ -105,8 +107,115 @@ public class MathUtils
 	
 	public static int getSkillScore (int abilityScore, int proBonus, boolean addProBonus) 
 	{
-		return addProBonus ? abilityScore + proBonus : abilityScore;
+		return addProBonus ? getAbilityModifer(abilityScore) + proBonus : getAbilityModifer(abilityScore);
 	}
 	
-
+	public static int getInitativeScore (int dexerityScore, int [] bonuses) 
+	{
+		int init = getAbilityModifer(dexerityScore);
+		
+		if (bonuses != null) {
+			for (int bonus: bonuses) 
+			{
+				init += bonus;
+			}
+		}
+		
+		return init;
+	}
+	
+	public static int getPassiveWisdomScore (int perception, int bonus) {
+		return perception + bonus + 10;
+	}
+	
+	public static int getArmorClass (int dexerityScore, String [] armors) 
+	{
+		int armorClass =  0;
+		int dexBonus = getAbilityModifer(dexerityScore);
+		
+		for (String armor: armors) 
+		{
+			int armorIndex = IOUtils.getIndexBinarySearch(armor, IOUtils.armorStatsFile);
+			String [] armorStats = IOUtils.getCol(armorIndex, IOUtils.armorStatsFile);
+			
+			String [] addDexInfo = armorStats[2].split("=");
+			
+			if (addDexInfo[0].equalsIgnoreCase("true")) 
+			{
+				if (addDexInfo[1].equalsIgnoreCase("true")) 
+				{
+					if (Double.parseDouble(addDexInfo[2]) < armorClass) {
+						armorClass += (int)Double.parseDouble(armorStats[1]) 
+								+ (int) Double.parseDouble(addDexInfo[2]);
+					}
+					else {
+						armorClass += (int)Double.parseDouble(armorStats[1]) + dexBonus;
+					}
+				}
+				else 
+				{
+					armorClass += (int)Double.parseDouble(armorStats[1]) + dexBonus;
+				}
+			}
+			else {
+				armorClass += (int)Double.parseDouble(armorStats[1]);
+			}
+		}
+		
+		return armorClass;
+	}
+	
+	public static int getAttackBonus(int strengthScore, int dexerityScore, int proBonus, String weapon) 
+	{
+		int weaponIndex = IOUtils.getIndexBinarySearch(weapon, IOUtils.weaponStatsFile);
+		String [] weaponStats = IOUtils.getCol(weaponIndex, IOUtils.weaponStatsFile);
+		
+		int abilityMod;
+		
+		if (weaponStats[2].split("=")[0].equalsIgnoreCase("true")) 
+		{
+			abilityMod =  getAbilityModifer(dexerityScore);
+		}
+		else if (weaponStats[3].split("=")[0].equalsIgnoreCase("true")) 
+		{
+			if (dexerityScore > strengthScore) {
+				abilityMod =  getAbilityModifer(dexerityScore);
+			}
+			else {
+				abilityMod =  getAbilityModifer(strengthScore);
+			}
+		}
+		else {
+			abilityMod =  getAbilityModifer(strengthScore);
+		}
+		
+		return abilityMod + proBonus;
+	}
+	
+	public static int getSpellAttackBonus(String castingAbility, int proBonus, int [] abilityScores) 
+	{
+		int castingAbilityPos = getCastingAbilityPos(castingAbility);
+		
+		return proBonus + getAbilityModifer(abilityScores[castingAbilityPos]);
+	}
+	
+	public static int getSpellSaveDC(String castingAbility, int proBonus, int [] abilityScores) 
+	{
+		return getSpellAttackBonus(castingAbility, proBonus, abilityScores) + 8;
+	}
+	
+	public static int getCastingAbilityPos(String castingAbility) 
+	{
+		switch(castingAbility) {
+		case "Intelligence":
+			return 3;
+		case "Wisdom":
+			return 4;
+		case "Charisma":
+			return 5;
+		default:
+			return -1;
+		}
+	}
+	
 }

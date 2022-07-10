@@ -3,27 +3,31 @@ package dndEntities;
 import java.util.ArrayList;
 
 import util.IOUtils;
+import util.MathUtils;
 
 public class DndClass {
 	
 	private String className, castingAbility, pathTitle, spellListFilePath;
-	private int hitDie, proBonus, castingAbilityPos, spellsKnown, level;
+	private int hitDie, proBonus, spellsKnown, level, initBonus;
 	private String [] armorPro, weaponPro, toolPro, savingThrows, skillBonus, 
 		armors, weapons, otherItems, features, choicesList;
 	private ArrayList<String> [] spells;
-	private int [] spellSlots;
+	private int [] spellSlots, abilityScores;
+	private char preparedOrKnownCaster;
 	private Race race;
 	private Background background;
 	public static final String classFileName = "classes/classPathway.txt";
 	public static final String classStandFile = "classes/StandardFeatures.xlsx";
 	public static final String classChoiceFile = "classes/ChoiceFeatures.xlsx";
 	
-	public DndClass(Race race, Background background, String className, int level) 
+	public DndClass(Race race, Background background, String className, int level, int [] abilityScores) 
 	{
 		this.race = race;
 		this.background = background;
 		this.className = className;
 		this.level = level;
+		this.abilityScores = abilityScores;
+		finalizeAbilityScores();
 		int classIndex = initilizeStandardFeatures();
 		this.choicesList = IOUtils.getCol(classIndex, classChoiceFile);
 	}
@@ -34,25 +38,125 @@ public class DndClass {
 	public String[] getChoicesList() { return choicesList; }
 	public String[] getWeapons() { return weapons; }
 	public String[] getArmors() { return armors; }
-	public String[] getOtherItems() { return otherItems; }
 	public String getPathTitle() { return pathTitle; }
 	public String getSpellListFilePath() { return spellListFilePath; }
 	public ArrayList<String>[] getSpells() { return spells; }
 	public int[] getSpellSlots() { return spellSlots; }
 	public String getCastingAbility() { return castingAbility; }
-	public int getCastingAbilityPos() { return castingAbilityPos; }
 	public int getSpellsKnown() { return spellsKnown; }
 	public int getHitDie() { return hitDie; }
 	public Race getRace() { return race; }
 	public Background getBackground() { return background; }
 	public int getLevel() { return level; }
 	public String[] getSavingThrows() { return savingThrows; }
+	public int[] getAbilityScores() { return abilityScores; }
+	public int getInitBonus() { return initBonus; }
+	
+	public int getSpellAttackBonus() {
+		if (castingAbility != null) {
+			return MathUtils.getSpellAttackBonus(castingAbility, proBonus, abilityScores);
+		}
+		return 0;
+	}
+	public int getSpellSaveDC() {
+		if (castingAbility != null) {
+			return MathUtils.getSpellSaveDC(castingAbility, proBonus, abilityScores);
+		}
+		return 0;
+	}
+	public int getRacialSpellAttackBonus() {
+		if (race.getCastingAbility() != null) {
+			return MathUtils.getSpellAttackBonus(race.getCastingAbility(), proBonus, abilityScores);
+		}
+		return 0;
+	}
+	public int getRacialSpellSaveDC() {
+		if (race.getCastingAbility() != null) {
+			return MathUtils.getSpellSaveDC(race.getCastingAbility(), proBonus, abilityScores);
+		}
+		return 0;
+	}
+	
+	public String [] getEquipment() 
+	{
+		String [] backgroundItems = background.getEquipment();
+		String[] equip = new String[backgroundItems.length + otherItems.length];
+		
+		int indexEquip = 0;
+		
+		for (int i = 0; i < backgroundItems.length; i++) 
+		{
+			equip[indexEquip++] = backgroundItems[i];
+		}
+		for (int i = 0; i < otherItems.length; i++) 
+		{
+			equip[indexEquip++] = otherItems[i];
+		}
+		
+		
+		return equip;
+		
+	}
+
+	public int [] getAbilityModifers() {
+		int [] abilityScoreMod = new int[6];
+		
+		for (int i = 0; i < abilityScoreMod.length; i++) 
+		{
+			abilityScoreMod[i] = MathUtils.getAbilityModifer(abilityScores[i]);
+		}
+		
+		return abilityScoreMod;
+	}
+	public int [] getSkillScores() 
+	{
+		return MathUtils.getSkillScores(abilityScores, proBonus, skillBonus);
+	}
+	public int [] getSavingThrowScores() {
+		return MathUtils.getSavingThrowScores(abilityScores, savingThrows, proBonus);
+	}
+	
+	//Needs to be completed later
+	public int getInitative() {
+		return MathUtils.getInitativeScore(abilityScores[1], null);
+	}
+	//Needs to be completed later
+	public int getPassiveWisdom() {
+		return MathUtils.getPassiveWisdomScore(getSkillScores()[11], 0);
+	}
+	
+	public int getArmorClass() 
+	{
+		return MathUtils.getArmorClass(abilityScores[1], armors);
+	}
+	
+	public String [][] getWeaponStats() 
+	{
+		String weaponStats[][] = new String[weapons.length][3];
+		int counter = 0;
+		for (String weapon: weapons) 
+		{
+			int weaponIndex = IOUtils.getIndexBinarySearch(weapon, IOUtils.weaponStatsFile);
+			String [] weaponInfo = IOUtils.getCol(weaponIndex, IOUtils.weaponStatsFile);
+			String [] damage = weaponInfo[1].split("=");
+			
+			weaponStats[counter][0] = weapon;
+			weaponStats[counter][1] = Integer.valueOf(
+					MathUtils.getAttackBonus(abilityScores[0], abilityScores[1], proBonus, weapon)).toString();
+			weaponStats[counter][2] = damage[0] + "/" + damage[1];
+			
+			counter++;
+		}
+		
+		return weaponStats;
+	}
 
 	public void setWeapons (String [] weapons) { this.weapons = weapons; }
 	public void setArmors(String[] armors) { this.armors = armors; }
 	public void setOtherItems(String[] otherItems) { this.otherItems = otherItems; }
 	public void setPathTitle(String pathTitle) { this.pathTitle = pathTitle; }
 	public void setSpells(ArrayList<String>[] spells) { this.spells = spells; }
+	public void setAbilityScores(int[] abilityScores) { this.abilityScores = abilityScores; }
 
 	public boolean setSkillBonus(String[] skillBonus) 
 	{
@@ -163,10 +267,10 @@ public class DndClass {
 	
 	private void initilizeSpellCastingTraits(String [] spellCastingTraitList) 
 	{
-		setCastingAbilityPos(spellCastingTraitList[1]);
+		this.castingAbility = spellCastingTraitList[1];
 		this.spellListFilePath = spellCastingTraitList[3];
-		char preparedOrKnownCaster = spellCastingTraitList[4].toUpperCase().charAt(0);
-		setSpellsAndSlots(spellCastingTraitList[2], preparedOrKnownCaster);
+		this.preparedOrKnownCaster = spellCastingTraitList[4].toUpperCase().charAt(0);
+		setSpellsAndSlots(spellCastingTraitList[2]);
 	}
 	
 	
@@ -220,32 +324,12 @@ public class DndClass {
 		return tempFeatures.toArray(new String [tempFeatures.size()]);
 	}
 	
-	private void setCastingAbilityPos (String castingAbility) 
-	{
-		this.castingAbility = castingAbility;
-		
-		switch (this.castingAbility) 
-		{
-			case "Intelligence":
-				castingAbilityPos = 3;
-				break;
-			case "Wisdom":
-				castingAbilityPos = 4;
-				break;
-			case "Charisma":
-				castingAbilityPos = 5;
-				break;
-			default:
-				castingAbilityPos = -1;
-		}
-	}
-	
-	private void setSpellsAndSlots(String filepath, char preparedOrKnownCaster) 
+	private void setSpellsAndSlots(String filepath) 
 	{
 		String [] spellInfo = IOUtils.getCol(level - 1, filepath);
 		this.spellSlots = new int [spellInfo.length - 2];
 		
-		this.spellsKnown = preparedOrKnownCaster == 'K' ? (int)Double.parseDouble(spellInfo[1]) : -1;
+		this.spellsKnown = this.preparedOrKnownCaster == 'K' ? (int)Double.parseDouble(spellInfo[1]) : -1;
 		
 		for (int i = 2; i < spellInfo.length; i++) 
 		{
@@ -276,5 +360,20 @@ public class DndClass {
 		}
 		
 		return updatedList;
+	}
+	
+	private void finalizeAbilityScores() 
+	{
+		int abilityScoreIncr [] = race.getAbilityScoreIncr();
+		
+		for (int i = 0; i < 6; i++) 
+		{
+			if (abilityScores[i] + abilityScoreIncr[i] < 20) {
+				abilityScores[i] = abilityScores[i] + abilityScoreIncr[i];
+			}
+			else {
+				abilityScores[i] = 20;
+			}
+		}
 	}
 }

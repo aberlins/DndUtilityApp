@@ -99,4 +99,17 @@ public class Background {
 			this.equipment = atts[4].split("=");
 		}
 	}
+	
+	@Override
+	public String toString() 
+	{
+		String background = "";
+		background += "Background: " + name + "\n";
+		background += "Personality Trait: " + personalityTrait + "\n";
+		background += "Flaw: " + flaw + "\n";
+		background += "Ideals: " + ideal + "\n";
+		background += "Bonds: " + bond;
+		
+		return background;
+	}
 }

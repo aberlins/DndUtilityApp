@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import dndEntities.Alignment;
 import dndEntities.Background;
+import dndEntities.CharacterSheet;
 import dndEntities.DndClass;
 import dndEntities.Gender;
 import dndEntities.Race;
@@ -61,7 +62,7 @@ public class RandUtils {
 		return hitPoint;
 	}
 	
-	public static int [] ranomdAbilityScoreImprov (int level, int [] abilityScores) 
+	public static int [] randomAbilityScoreImprov (int level, int [] abilityScores) 
 	{
 		do {
 			if (level == 19 || (level % 4 == 0 && level != 0 && level != 20)) 
@@ -71,7 +72,7 @@ public class RandUtils {
 				int randomAbility = -1;
 				do {
 					randomAbility = (int)(Math.random() * 6);
-					if (abilityScores[randomAbility] != 20) {
+					if (abilityScores[randomAbility] < 20) {
 						break;
 					}
 				} while (true);
@@ -85,7 +86,7 @@ public class RandUtils {
 					int randomAbility2 = -1;
 					do {
 						randomAbility2 = (int)(Math.random() * 6);
-					} while (randomAbility == randomAbility2 || abilityScores[randomAbility2] == 20);
+					} while (randomAbility == randomAbility2 || abilityScores[randomAbility2] >= 20);
 					
 					abilityScores[randomAbility] += 1;
 					abilityScores[randomAbility2] += 1;
@@ -208,7 +209,7 @@ public class RandUtils {
 			{
 				if (oldToolProf[i].startsWith("*")) 
 				{
-					newToolProf = randomToolProf(oldToolProf[i].substring(1));
+					newToolProf = randomItemOrProf(oldToolProf[i].substring(1), IOUtils.toolTypeFile);
 					String [] equip = background.getEquipment();
 					for (int j = 0; j < equip.length; j++) 
 					{
@@ -254,7 +255,8 @@ public class RandUtils {
 		
 		String classList [] = IOUtils.getRow(0, DndClass.classStandFile);
 		String className = classList[(int) (Math.random() * classList.length)];
-		DndClass dndclass = new DndClass(race, background, className, level);
+		DndClass dndclass = new DndClass(race, background, className, level, stats);
+		dndclass.setAbilityScores(randomAbilityScoreImprov(level, dndclass.getAbilityScores()));
 		
 		String [] choiceFeatures = dndclass.getChoicesList();
 		
@@ -262,9 +264,9 @@ public class RandUtils {
 		String [] listOfSkills = skillBonusRules[1].split("/");
 		dndclass.setSkillBonus(randomList(listOfSkills, Integer.parseInt(skillBonusRules[0])));
 		
-		dndclass.setWeapons(randomEquip(choiceFeatures[2].split("=")));
-		dndclass.setArmors(randomEquip(choiceFeatures[3].split("=")));
-		dndclass.setOtherItems(randomEquip(choiceFeatures[4].split("=")));
+		dndclass.setWeapons(randomEquip(choiceFeatures[2].split("="), IOUtils.weaponTypeFile, false));
+		dndclass.setArmors(randomEquip(choiceFeatures[3].split("="), IOUtils.armorTypeFile, true));
+		dndclass.setOtherItems(randomEquip(choiceFeatures[4].split("="), null, false));
 		
 		String [] archetypeChoices = choiceFeatures[5].split("=");
 		
@@ -284,15 +286,30 @@ public class RandUtils {
 			
 		}
 		
-		if (dndclass.getSpells() != null && dndclass.getCastingAbilityPos() != -1) {
+		if (dndclass.getSpells() != null && dndclass.getCastingAbility() != null) {
+			
+			int castingAbilityPos = MathUtils.getCastingAbilityPos(dndclass.getCastingAbility());
 			
 				dndclass.setSpells(
 					randomSpells(dndclass.getSpells(), dndclass.getSpellSlots(), dndclass.getSpellListFilePath(),
-							level, stats[dndclass.getCastingAbilityPos()], dndclass.getSpellsKnown()));
+							level, stats[castingAbilityPos], dndclass.getSpellsKnown()));
 		}
 		
 		return dndclass;
 		
+	}
+	
+	public static CharacterSheet randomCharacter(DndClass dndClass) 
+	{
+		Gender gender = randomGender();
+		String name = RandUtils.randomName(dndClass.getRace(), gender);
+		int age =  RandUtils.randomAge(dndClass.getRace().getMaxAge());
+		
+		CharacterSheet character = new CharacterSheet(dndClass, gender, name, age);
+		character.setHitPoints(rollHitPoints(dndClass.getHitDie(), 
+				dndClass.getLevel(), character.getDndClass().getAbilityModifers()[2]));
+		
+		return character;
 	}
 	
 	public static String [] randomList(String [] list, int numOfItems) 
@@ -327,18 +344,22 @@ public class RandUtils {
 	// ! - means and or multiple items in String
 	// @ - means a certain number of the same item (ex: 2@Dagger is 2 daggers)
 	// ? - means string is a category of item and needs to be randomly selected.
-	private static String [] randomEquip(String [] list) 
+	private static String [] randomEquip(String [] list, String filePath, boolean isArmor) 
 	{
 		ArrayList<String> finalList = new ArrayList<>();
 		
 		for (String items: list) 
 		{
+			String itemList [] = items.split("/");
 			boolean invalidChoice = true;
 			do 
 			{
-				String itemList [] = items.split("/");
 				String selectedItem = itemList[(int)(Math.random() * itemList.length)];
 			
+				if(filePath != null && selectedItem.startsWith("?")) {
+					selectedItem = randomItemOrProf(selectedItem.substring(1), filePath);
+				}
+				
 				if ((!(selectedItem.startsWith("*")) && (!finalList.contains(selectedItem)))) 
 				{
 					if (selectedItem.contains("!"))
@@ -387,11 +408,11 @@ public class RandUtils {
 		return finalList.toArray(new String[0]);
 	}
 	
-	private static String randomToolProf (String toolType) 
+	private static String randomItemOrProf (String itemType, String filePath) 
 	{
-		int toolIndex = IOUtils.getIndex(toolType, IOUtils.toolTypeFile);
-		String [] tools = IOUtils.getCol(toolIndex, IOUtils.toolTypeFile);
-		return tools[(int)(Math.random() * tools.length - 1) + 1];
+		int itemOrProfIndex = IOUtils.getIndex(itemType, filePath);
+		String [] itemsOrProf = IOUtils.getCol(itemOrProfIndex, filePath);
+		return itemsOrProf[(int)(Math.random() * itemsOrProf.length - 1) + 1];
 	}
 	
 	private static ArrayList<String> [] randomSpells(ArrayList<String> [] spells, int [] spellSlots, String spellListFilePath, 

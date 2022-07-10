@@ -20,6 +20,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class IOUtils {
 	
 	public static final String toolTypeFile = "items/ToolTypes.xlsx";
+	public static final String weaponTypeFile = "items/WeaponTypes.xlsx";
+	public static final String weaponStatsFile = "items/WeaponStats.xlsx";
+	public static final String armorTypeFile = "items/ArmorTypes.xlsx";
+	public static final String armorStatsFile = "items/ArmorStats.xlsx";
 	
 	public static String getAttributeFolder(String attributeName, String fileAttributeList) 
 	{
@@ -172,6 +176,29 @@ public class IOUtils {
 		}
 		
 		return -1;
+	}
+	
+	public static int getIndexBinarySearch (String attributeName, String filePath) 
+	{
+		String attributeList [] = getRow(0, filePath);
+		int low = 0, high = attributeList.length - 1;
+		
+		while (low <= high) 
+		{
+			int guess = low + ((high - low) / 2);
+			String stringGuess = attributeList[guess];
+			
+			
+			if (stringGuess.compareTo(attributeName) < 0) 
+				low = guess + 1;
+			else if (stringGuess.compareTo(attributeName) > 0)
+				high = guess - 1;
+			else
+				return guess;
+		}
+		
+		return -1;
+		
 	}
 	
 }
