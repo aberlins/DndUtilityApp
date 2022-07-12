@@ -2,6 +2,7 @@ package dndEntities;
 
 import java.util.ArrayList;
 
+import util.GenUtils;
 import util.IOUtils;
 import util.MathUtils;
 
@@ -10,7 +11,7 @@ public class DndClass {
 	private String className, castingAbility, pathTitle, spellListFilePath;
 	private int hitDie, proBonus, spellsKnown, level, initBonus;
 	private String [] armorPro, weaponPro, toolPro, savingThrows, skillBonus, 
-		armors, weapons, otherItems, features, choicesList;
+		armors, weapons, otherItems, features, choicesList, langauges;
 	private ArrayList<String> [] spells;
 	private int [] spellSlots, abilityScores;
 	private char preparedOrKnownCaster;
@@ -28,8 +29,8 @@ public class DndClass {
 		this.level = level;
 		this.abilityScores = abilityScores;
 		finalizeAbilityScores();
-		int classIndex = initilizeStandardFeatures();
-		this.choicesList = IOUtils.getCol(classIndex, classChoiceFile);
+		initilizeStandardFeatures();
+		this.choicesList = IOUtils.getCol(className, classChoiceFile, false);
 	}
 	
 	public String getClassName() { return className; }
@@ -37,6 +38,7 @@ public class DndClass {
 	public String[] getSkillBonus() { return skillBonus; }
 	public String[] getChoicesList() { return choicesList; }
 	public String[] getWeapons() { return weapons; }
+	public String[] getArmorPro() { return armorPro; }
 	public String[] getArmors() { return armors; }
 	public String getPathTitle() { return pathTitle; }
 	public String getSpellListFilePath() { return spellListFilePath; }
@@ -51,7 +53,8 @@ public class DndClass {
 	public String[] getSavingThrows() { return savingThrows; }
 	public int[] getAbilityScores() { return abilityScores; }
 	public int getInitBonus() { return initBonus; }
-	
+	public String[] getLangauges() { return langauges; }
+
 	public int getSpellAttackBonus() {
 		if (castingAbility != null) {
 			return MathUtils.getSpellAttackBonus(castingAbility, proBonus, abilityScores);
@@ -79,22 +82,7 @@ public class DndClass {
 	
 	public String [] getEquipment() 
 	{
-		String [] backgroundItems = background.getEquipment();
-		String[] equip = new String[backgroundItems.length + otherItems.length];
-		
-		int indexEquip = 0;
-		
-		for (int i = 0; i < backgroundItems.length; i++) 
-		{
-			equip[indexEquip++] = backgroundItems[i];
-		}
-		for (int i = 0; i < otherItems.length; i++) 
-		{
-			equip[indexEquip++] = otherItems[i];
-		}
-		
-		
-		return equip;
+		return (String []) GenUtils.combineLists(background.getEquipment(), otherItems, false);
 		
 	}
 
@@ -136,8 +124,7 @@ public class DndClass {
 		int counter = 0;
 		for (String weapon: weapons) 
 		{
-			int weaponIndex = IOUtils.getIndexBinarySearch(weapon, IOUtils.weaponStatsFile);
-			String [] weaponInfo = IOUtils.getCol(weaponIndex, IOUtils.weaponStatsFile);
+			String [] weaponInfo = IOUtils.getCol(weapon, IOUtils.weaponStatsFile, true);
 			String [] damage = weaponInfo[1].split("=");
 			
 			weaponStats[counter][0] = weapon;
@@ -149,6 +136,20 @@ public class DndClass {
 		}
 		
 		return weaponStats;
+	}
+	
+	public String getPathName() {
+		if (pathTitle != null) 
+		{
+			int splitIndex = pathTitle.indexOf(":") + 2;
+			return pathTitle.substring(splitIndex);
+		}
+		return null;
+	}
+	
+	public String [] getAllProficiencies() {
+		String [] proList = GenUtils.combineLists(armorPro, weaponPro, true);
+		return GenUtils.combineLists(proList, toolPro, true);
 	}
 
 	public void setWeapons (String [] weapons) { this.weapons = weapons; }
@@ -274,15 +275,14 @@ public class DndClass {
 	}
 	
 	
-	private int initilizeStandardFeatures() 
+	private void initilizeStandardFeatures() 
 	{
-		int classIndex = IOUtils.getIndex(className, classStandFile);
-		String featuresList [] = IOUtils.getCol(classIndex, classStandFile);
+		String featuresList [] = IOUtils.getCol(className, classStandFile, true);
 		proBonus = getProBonus(featuresList[1]);
 		hitDie = (int)Double.parseDouble(featuresList[2]);
-		armorPro = featuresList[3].split("=");
-		weaponPro = featuresList[4].split("=");
-		toolPro = featuresList[5].split("=");
+		armorPro = finalProList(featuresList[3].split("="), race.getArmorPro(), null);
+		weaponPro =  finalProList(featuresList[4].split("="), race.getWeaponPro(), null);
+		toolPro =  finalProList(featuresList[5].split("="), race.getToolPro(), background.getToolProficiences());
 		savingThrows = featuresList[6].split("=");
 		
 		String spellList [] = featuresList[7].split("=");
@@ -291,8 +291,6 @@ public class DndClass {
 		}
 		
 		features = setFeatures(featuresList[8]);
-		
-		return classIndex;
 		
 	}
 	
@@ -376,4 +374,17 @@ public class DndClass {
 			}
 		}
 	}
+	
+	private String[] finalProList (String [] classPro, String [] racePro, String [] backPro) 
+	{
+		String [] list = classPro;
+		if (racePro != null) {
+			list = GenUtils.combineLists(racePro, list, true);
+		}
+		if (backPro != null) {
+			list = GenUtils.combineLists(backPro, list, true);
+		}
+		return list;
+	}
+	
 }

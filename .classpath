@@ -11,5 +11,7 @@
 	<classpathentry kind="lib" path="libPoi/poi-ooxml-3.17.jar"/>
 	<classpathentry kind="lib" path="libPoi/poi-ooxml-schemas-3.17.jar"/>
 	<classpathentry kind="lib" path="libPoi/xmlbeans-2.6.0.jar"/>
+	<classpathentry kind="lib" path="libPDFBox/pdfbox-app-2.0.26.jar"/>
+	<classpathentry kind="lib" path="libPDFBox/preflight-app-2.0.26.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

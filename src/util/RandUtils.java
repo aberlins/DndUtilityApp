@@ -264,9 +264,9 @@ public class RandUtils {
 		String [] listOfSkills = skillBonusRules[1].split("/");
 		dndclass.setSkillBonus(randomList(listOfSkills, Integer.parseInt(skillBonusRules[0])));
 		
-		dndclass.setWeapons(randomEquip(choiceFeatures[2].split("="), IOUtils.weaponTypeFile, false));
-		dndclass.setArmors(randomEquip(choiceFeatures[3].split("="), IOUtils.armorTypeFile, true));
-		dndclass.setOtherItems(randomEquip(choiceFeatures[4].split("="), null, false));
+		dndclass.setWeapons(randomEquipOrLang(choiceFeatures[2].split("="), IOUtils.weaponTypeFile, false));
+		dndclass.setArmors(randomEquipOrLang(choiceFeatures[3].split("="), IOUtils.armorTypeFile, true));
+		dndclass.setOtherItems(randomEquipOrLang(choiceFeatures[4].split("="), null, false));
 		
 		String [] archetypeChoices = choiceFeatures[5].split("=");
 		
@@ -308,6 +308,7 @@ public class RandUtils {
 		CharacterSheet character = new CharacterSheet(dndClass, gender, name, age);
 		character.setHitPoints(rollHitPoints(dndClass.getHitDie(), 
 				dndClass.getLevel(), character.getDndClass().getAbilityModifers()[2]));
+		character.setLanguages(randomEquipOrLang(character.getLanguages(), IOUtils.languageFile, false));
 		
 		return character;
 	}
@@ -344,7 +345,7 @@ public class RandUtils {
 	// ! - means and or multiple items in String
 	// @ - means a certain number of the same item (ex: 2@Dagger is 2 daggers)
 	// ? - means string is a category of item and needs to be randomly selected.
-	private static String [] randomEquip(String [] list, String filePath, boolean isArmor) 
+	private static String [] randomEquipOrLang(String [] list, String filePath, boolean isArmor) 
 	{
 		ArrayList<String> finalList = new ArrayList<>();
 		
@@ -410,8 +411,7 @@ public class RandUtils {
 	
 	private static String randomItemOrProf (String itemType, String filePath) 
 	{
-		int itemOrProfIndex = IOUtils.getIndex(itemType, filePath);
-		String [] itemsOrProf = IOUtils.getCol(itemOrProfIndex, filePath);
+		String [] itemsOrProf = IOUtils.getCol(itemType, filePath, false);
 		return itemsOrProf[(int)(Math.random() * itemsOrProf.length - 1) + 1];
 	}
 	
@@ -429,7 +429,6 @@ public class RandUtils {
 		}
 		
 		int maxLevelSpell = spellSlots.length;
-		
 		String spellList [][] = new String [maxLevelSpell][];
 		
 		//Get spells available to cast
@@ -474,6 +473,7 @@ public class RandUtils {
 	private static ArrayList<String> [] finalizeSpells(ArrayList<String> [] spells) 
 	{
 		int counter = 0;
+		
 		for (ArrayList<String> spellLevelList : spells) 
 		{
 			for (String spell: spellLevelList) 

@@ -6,7 +6,12 @@ public class MathUtils
 {
 	public static int getAbilityModifer(int abilityScore) 
 	{
-		return (abilityScore - 10)/2;
+		if (abilityScore > 9)
+			return (abilityScore - 10)/2;
+		else {
+			double score = (abilityScore - 10);
+			return (int) Math.floor(score/2);
+		}
 	}
 	
 	public static int [] getSavingThrowScores(int [] abilityScores, String [] savingThrows, int proBonus) 
@@ -135,8 +140,7 @@ public class MathUtils
 		
 		for (String armor: armors) 
 		{
-			int armorIndex = IOUtils.getIndexBinarySearch(armor, IOUtils.armorStatsFile);
-			String [] armorStats = IOUtils.getCol(armorIndex, IOUtils.armorStatsFile);
+			String [] armorStats = IOUtils.getCol(armor, IOUtils.armorStatsFile, true);
 			
 			String [] addDexInfo = armorStats[2].split("=");
 			
@@ -167,8 +171,7 @@ public class MathUtils
 	
 	public static int getAttackBonus(int strengthScore, int dexerityScore, int proBonus, String weapon) 
 	{
-		int weaponIndex = IOUtils.getIndexBinarySearch(weapon, IOUtils.weaponStatsFile);
-		String [] weaponStats = IOUtils.getCol(weaponIndex, IOUtils.weaponStatsFile);
+		String [] weaponStats = IOUtils.getCol(weapon, IOUtils.weaponStatsFile, true);
 		
 		int abilityMod;
 		

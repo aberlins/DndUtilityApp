@@ -7,7 +7,7 @@ import util.IOUtils;
 public class Race 
 {
 	private String name, size, castingAbility, racialNameFilePath;
-	private String [] languages, abilities;
+	private String [] languages, abilities, armorPro, weaponPro, toolPro;
 	private ArrayList<String> [] spells;
 	private int [] abilityScoreIncr;
 	private int speed, maxAge;
@@ -30,6 +30,9 @@ public class Race
 	public ArrayList<String>[] getSpells() { return spells; }
 	public String getRacialNameFilePath() { return racialNameFilePath; }
 	public String getCastingAbility() { return castingAbility; }
+	public String[] getArmorPro() { return armorPro; }
+	public String[] getWeaponPro() { return weaponPro; }
+	public String[] getToolPro() { return toolPro; }
 
 	private void initializeRaceAttributes(String [] raceAttributes, int level) 
 	{

@@ -54,16 +54,7 @@ public class Background {
 	public void setFlaw(String flaw) { this.flaw = flaw; }
 	public void setToolProficiences(String[] toolProficiences) { this.toolProficiences = toolProficiences; }
 	public void setEquipment(String[] equipment) { this.equipment = equipment; }
-
-	public void setLanguages(String [] languages) 
-	{ 
-		int index = 0;
-		for (String lan: this.languages) 
-		{
-			if (lan.equals("Any") && languages.length > index) 
-				lan = languages[index++];
-		}
-	}
+	public void setLanguages(String[] languages) { this.languages = languages; }
 	
 	public boolean setIdeal(int idealNum) 
 	{

@@ -10,7 +10,9 @@ public class CharacterSheet {
 	public static final String [] skillNames = {"Acrobatics", "Animal Handling", "Arcana", "Athletics", "Deception", "History",
 			"Insight", "Intimidation", "Investigation", "Medicine", "Nature", "Perception", "Performance", "Persuasion", 
 			"Religion", "Sleight of Hand", "Stealth", "Survival"};
+	private boolean [] skillProList, savingProList;
 	private int hitPoints, age;
+	private String [] languages;
 	private Gender gender;
 	private String name;
 	private DndClass dndClass;
@@ -21,7 +23,9 @@ public class CharacterSheet {
 		this.gender = gender;
 		this.age = age;
 		this.name = name;
-		
+		this.languages = setInitialLanguages();
+		this.skillProList = setProLists(skillNames, dndClass.getSkillBonus());
+		this.savingProList =  setProLists(abilityNames, dndClass.getSavingThrows());
 	}
 	
 	public int getHitPoints() { return hitPoints; }
@@ -30,6 +34,10 @@ public class CharacterSheet {
 	public String getName() { return name; }
 	public int getAge() { return age; }
 	public Alignment getAlignment() { return dndClass.getBackground().getAlignment(); }
+	public String getPersonalityTrait() { return dndClass.getBackground().getPersonalityTrait(); }
+	public String getIdeal() { return dndClass.getBackground().getIdeal(); }
+	public String getBond() { return dndClass.getBackground().getBond(); }
+	public String getFlaw() { return dndClass.getBackground().getFlaw(); }
 	public int[] getAbilityScores() { return dndClass.getAbilityScores(); }
 	public int[] getAbilityModifers() { return dndClass.getAbilityModifers(); }
 	public int [] getSavingThrowScores() { return dndClass.getSavingThrowScores(); }
@@ -49,15 +57,36 @@ public class CharacterSheet {
 	public int getRacialSpellSaveDC() { return dndClass.getRacialSpellSaveDC(); }
 	public String getClassName() { return dndClass.getClassName();}
 	public String getPathTitle() { return dndClass.getPathTitle(); }
+	public String getPathName() { return dndClass.getPathName(); }
 	public String [][] getWeaponStats() { return dndClass.getWeaponStats(); }
 	public String [] getArmor() { return dndClass.getArmors(); }
+	public String getBackgroundName() { return dndClass.getBackground().getName(); }
 	public ArrayList<String>[] getClassSpells() {return dndClass.getSpells();}
 	public ArrayList<String>[] getRaceSpells() {return dndClass.getRace().getSpells();}
 	public String [] getEquipment() { return dndClass.getEquipment(); }
+	public String[] getLanguages() { return languages; }
+	public boolean[] getSkillProList() { return skillProList; }
+	public boolean[] getSavingProList() { return savingProList; }
 	
-	
-
+	public void setLanguages(String[] langauges) { this.languages = langauges; }
 	public void setHitPoints(int hitPoints) { this.hitPoints = hitPoints; }
+	
+	public String proficienciesString() 
+	{
+		String proString = "Proficiences: ";
+		for (String pro: dndClass.getAllProficiencies()) {
+			proString += pro + ", ";
+		}
+		return proString.substring(0, proString.length() - 2);
+	}
+	
+	public String languagesString() {
+		String langString = "Languages: ";
+		for (String lang: languages) {
+			langString += lang + ", ";
+		}
+		return langString;
+	}
 
 	@Override
 	public String toString() 
@@ -70,6 +99,7 @@ public class CharacterSheet {
 		if (pathTitle != null) {
 			sheet += getPathTitle() +"\n";
 		}
+		sheet += langString() + "\n";
 		sheet += abilityString() + "\n";
 		sheet += skillString() + "\n";
 		sheet += dndClass.getBackground().toString() + "\n";
@@ -240,6 +270,66 @@ public class CharacterSheet {
 		}
 		
 		return inventoryString.substring(0, inventoryString.length() - 2);
+	}
+	
+	private String langString() 
+	{
+		String langString = "Languages: ";
+		
+		for (String lang: languages) 
+		{
+			langString += lang + ", ";
+		}
+		
+		return langString.substring(0, langString.length() - 2);
+	}
+	
+	private String [] setInitialLanguages() 
+	{
+		String [] racialLanguages = dndClass.getRace().getLanguages();
+		String [] backgroundLanguages = dndClass.getBackground().getLanguages();
+		String [] classLanguages = dndClass.getLangauges();
+		ArrayList<String> languages = new ArrayList<>();
+		
+		for (String lang: racialLanguages) 
+		{
+			languages.add(lang);
+		}
+		for (String lang: backgroundLanguages) 
+		{
+			if (!(lang.equalsIgnoreCase("None")))
+				languages.add(lang);
+		}
+		if (classLanguages != null) {
+			for (String lang: classLanguages) 
+			{
+				languages.add(lang);
+			}
+		}
+		
+		return languages.toArray(new String[0]);
+		
+	}
+	
+	private boolean [] setProLists(String [] defVallist, String [] classValList) 
+	{
+		boolean [] proList = new boolean[defVallist.length];
+		
+		for (int i = 0; i < defVallist.length; i++) {
+			proList[i] = false;
+		}
+		
+		for (int i = 0; i < proList.length; i++) 
+		{
+			for (String pro: classValList) 
+			{
+				if (pro.equalsIgnoreCase(defVallist[i])) 
+				{
+					proList[i] = true;
+				}
+			}
+		}
+		return proList;
 	}
 	
 }
