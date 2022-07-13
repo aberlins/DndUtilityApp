@@ -43,6 +43,8 @@ public class CharacterSheet {
 	public int [] getSavingThrowScores() { return dndClass.getSavingThrowScores(); }
 	public int [] getSkillScores() { return dndClass.getSkillScores(); }
 	public int getLevel() {return dndClass.getLevel(); }
+	public String getHitDie() {return Integer.valueOf(dndClass.getLevel()).toString() + 
+			"d" + Integer.valueOf(dndClass.getHitDie()).toString(); }
 	public int getInitative() { return dndClass.getInitative(); }
 	public int getProBonus() {return dndClass.getProBonus(); }
 	public int getSpeed() { return dndClass.getRace().getSpeed(); }
@@ -51,6 +53,7 @@ public class CharacterSheet {
 	public String getCastingAbility() { return dndClass.getCastingAbility(); }
 	public int getSpellAttackBonus() { return dndClass.getSpellAttackBonus(); }
 	public int getSpellSaveDC() { return dndClass.getSpellSaveDC(); } 
+	public int [] getSpellSlots() { return dndClass.getSpellSlots(); }
 	public String getRaceName() { return dndClass.getRace().getName(); }
 	public String getRaceCastingAbility() { return dndClass.getRace().getCastingAbility(); }
 	public int getRacialSpellAttackBonus() { return dndClass.getRacialSpellAttackBonus(); }
@@ -59,6 +62,7 @@ public class CharacterSheet {
 	public String getPathTitle() { return dndClass.getPathTitle(); }
 	public String getPathName() { return dndClass.getPathName(); }
 	public String [][] getWeaponStats() { return dndClass.getWeaponStats(); }
+	public String [] getWeapons() { return dndClass.getWeapons(); }
 	public String [] getArmor() { return dndClass.getArmors(); }
 	public String getBackgroundName() { return dndClass.getBackground().getName(); }
 	public ArrayList<String>[] getClassSpells() {return dndClass.getSpells();}
@@ -67,6 +71,7 @@ public class CharacterSheet {
 	public String[] getLanguages() { return languages; }
 	public boolean[] getSkillProList() { return skillProList; }
 	public boolean[] getSavingProList() { return savingProList; }
+	public boolean isPreparedCaster() {return dndClass.isPreparedCaster(); }
 	
 	public void setLanguages(String[] langauges) { this.languages = langauges; }
 	public void setHitPoints(int hitPoints) { this.hitPoints = hitPoints; }
@@ -85,7 +90,34 @@ public class CharacterSheet {
 		for (String lang: languages) {
 			langString += lang + ", ";
 		}
-		return langString;
+		return langString.substring(0, langString.length() - 2);
+	}
+	
+	public String equipString() 
+	{
+		String equipString = "";
+		
+		for (String equip : getEquipment())
+		{
+			equipString += equip + ", ";
+		}
+		String [] weapons = getWeapons();
+		int maxWeapons = 0;
+		for (int i = 0; i < weapons.length; i++)
+		{
+			if (maxWeapons == 3)
+				break;
+			
+			equipString += weapons[i] + ", ";
+			maxWeapons++;
+			
+		}
+		for (String armor: getArmor()) 
+		{
+			equipString += armor + ", ";
+		}
+		
+		return equipString.substring(0, equipString.length() - 2);
 	}
 
 	@Override

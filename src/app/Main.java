@@ -56,11 +56,16 @@ public class Main {
 		data.add(Integer.valueOf(character.getSpeed()).toString());
 		data.add(Integer.valueOf(character.getHitPoints()).toString());
 		data.add(Integer.valueOf(character.getHitPoints()).toString());
+		data.add(character.getHitDie());
+		data.add(character.getHitDie());
+		data.add(Integer.valueOf(character.getPassiveWisdom()).toString());
 		data.add(character.getPersonalityTrait());
 		data.add(character.getIdeal());
 		data.add(character.getBond());
 		data.add(character.getFlaw());
 		data.add(character.proficienciesString() + "\n\n" + character.languagesString());
+		data.add(character.equipString());
+		
 		
 		int [] stats = character.getAbilityScores();
 		
@@ -83,6 +88,39 @@ public class Main {
 			data.add(Integer.valueOf(stat).toString());
 		}
 		
+		String [][] weapons = character.getWeaponStats();
+		for (int i = 0; i < weapons.length; i++)
+		{
+			if (i == 3)
+				break;
+			
+			for (String weaponInfo: weapons[i]) {
+				data.add(weaponInfo);
+			}
+		}
+		if (weapons.length == 1) 
+		{
+			for (int i = 0; i < 6; i++) {
+				data.add("");
+			}
+		}
+		if (weapons.length == 2) {
+			for (int i = 0; i < 3; i++) {
+				data.add("");
+			}
+		}
+		if (character.getCastingAbility() != null) {
+			data.add(character.getPathName() + " " + character.getClassName());
+			data.add(character.getCastingAbility());
+			data.add(Integer.valueOf(character.getSpellSaveDC()).toString());
+			data.add(Integer.valueOf(character.getSpellAttackBonus()).toString());
+		}
+		else {
+			for (int i = 0; i < 4; i++)
+				data.add("");
+		}
+		
+		
 		boolean [] button = character.getSavingProList();
 		
 		for (boolean val: button) {
@@ -94,11 +132,15 @@ public class Main {
 			butData.add(Boolean.valueOf(val));
 		}
 		
+		ArrayList<String> [] spells = character.getClassSpells();
+		int [] spellSlots = character.getSpellSlots();
+		boolean prepared = character.isPreparedCaster();
+		
 		Boolean [] buttonData = butData.toArray(new Boolean[0]);
 		String [] charaData = data.toArray(new String [0]);
 		String filePath = "C:\\Users\\Ash\\Desktop\\TestSheet.pdf";
 		
-		if (IOUtils.createCharacterSheet(charaData, buttonData, filePath)) 
+		if (IOUtils.createCharacterSheet(charaData, buttonData, spells, spellSlots, prepared, filePath)) 
 		{
 			System.out.println("Sheet created.");
 		}
@@ -113,6 +155,7 @@ public class Main {
 		public void run() 
 		{
 			level = RandUtils.randomLevel();
+			level = 20;
 			stats = RandUtils.rollCharacterStats();
 			
 			race = RandUtils.randomRace(level);

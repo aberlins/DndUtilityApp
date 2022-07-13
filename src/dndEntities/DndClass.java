@@ -54,7 +54,7 @@ public class DndClass {
 	public int[] getAbilityScores() { return abilityScores; }
 	public int getInitBonus() { return initBonus; }
 	public String[] getLangauges() { return langauges; }
-
+	
 	public int getSpellAttackBonus() {
 		if (castingAbility != null) {
 			return MathUtils.getSpellAttackBonus(castingAbility, proBonus, abilityScores);
@@ -158,6 +158,10 @@ public class DndClass {
 	public void setPathTitle(String pathTitle) { this.pathTitle = pathTitle; }
 	public void setSpells(ArrayList<String>[] spells) { this.spells = spells; }
 	public void setAbilityScores(int[] abilityScores) { this.abilityScores = abilityScores; }
+	
+	public boolean isPreparedCaster() {
+		return preparedOrKnownCaster == 'P';
+	}
 
 	public boolean setSkillBonus(String[] skillBonus) 
 	{
