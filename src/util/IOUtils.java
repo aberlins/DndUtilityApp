@@ -25,6 +25,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class IOUtils {
 	
+	public static final String fileExtensionBuild = "C:/Users/Public/Documents/DndRandApp-Build-1-7-14-2022/lib/";
 	public static final String toolTypeFile = "items/ToolTypes.xlsx";
 	public static final String weaponTypeFile = "items/WeaponTypes.xlsx";
 	public static final String weaponStatsFile = "items/WeaponStats.xlsx";
@@ -44,6 +45,7 @@ public class IOUtils {
 			"SleightofHand", "Stealth ", "Survival",
 			"Wpn Name", "Wpn1 AtkBonus", "Wpn1 Damage", "Wpn Name 2", "Wpn2 AtkBonus ", "Wpn2 Damage ",
 			"Wpn Name 3", "Wpn3 AtkBonus  ", "Wpn3 Damage ",
+			"CP", "SP", "EP", "GP", "PP", "Features and Traits", "AttacksSpellcasting",
 			"Spellcasting Class 2", "SpellcastingAbility 2", "SpellSaveDC  2", "SpellAtkBonus 2"};
 	public static final String [] pdfButtonFieldNames = 
 		{"Check Box 11", "Check Box 18", "Check Box 19", "Check Box 20", "Check Box 21", "Check Box 22",
@@ -113,6 +115,9 @@ public class IOUtils {
 	
 	public static String getAttributeFolder(String attributeName, String fileAttributeList) 
 	{
+		//
+		//fileAttributeList = fileExtensionBuild + fileAttributeList;
+		
 		try (Scanner fileStream = new Scanner(new File(fileAttributeList)))
 		{
 			while (fileStream.hasNextLine()) 
@@ -132,6 +137,9 @@ public class IOUtils {
 	
 	public static long getLineCount(String fileName)
 	{
+		//
+		//fileName = fileExtensionBuild + fileName;
+		
 		try (LineNumberReader lineReader = new LineNumberReader(new FileReader(fileName)))
 		{
 			while ((lineReader.readLine()) != null);
@@ -146,6 +154,8 @@ public class IOUtils {
 	public static String [] getContentsFromtxt(String fileName) 
 	{
 		String traitArray [] = null;
+		//
+		//fileName = fileExtensionBuild + fileName;
 		
 		try (Scanner fileStream = new Scanner(new File(fileName)))
 		{
@@ -314,7 +324,9 @@ public class IOUtils {
 	public static boolean createCharacterSheet(String [] stringContents, Boolean [] buttonContents, 
 			ArrayList<String> [] spells, int [] spellSlots, boolean isPreparedCaster, String fileName) 
 	{
-		File pdfFile = new File("general/5E_CharacterSheet_Fillable.pdf");
+		//String pdfFilePath = fileExtensionBuild + "general/5E_CharacterSheet_Fillable.pdf";
+		String pdfFilePath = "general/5E_CharacterSheet_Fillable.pdf";
+		File pdfFile = new File(pdfFilePath);
 		try (PDDocument doc = PDDocument.load(pdfFile))
 		{
 			PDDocumentCatalog docCatalog = doc.getDocumentCatalog();
@@ -405,6 +417,8 @@ public class IOUtils {
 	
 	private static Sheet getSheet(String fileName)
 	{
+		//
+		//fileName = fileExtensionBuild + fileName;
 		Workbook book = null;
 		Sheet sheet = null;
 		
@@ -427,36 +441,44 @@ public class IOUtils {
 	
 	private static String [] getRowContents(Sheet sheet, int index) 
 	{
-		ArrayList<String> rowList = new ArrayList<>();
-		Row row = sheet.getRow(index);
-		Iterator<Cell> cellIterator = row.cellIterator();
+		if (index != -1) {
+			ArrayList<String> rowList = new ArrayList<>();
+			Row row = sheet.getRow(index);
+			Iterator<Cell> cellIterator = row.cellIterator();
 	
-		while (cellIterator.hasNext()) 
-		{
-			Cell entry = cellIterator.next();
-			if (entry != null) {
-				entry.setCellType(1);
-				rowList.add(entry.getStringCellValue());
+			while (cellIterator.hasNext()) 
+			{
+				Cell entry = cellIterator.next();
+				if (entry != null) {
+					entry.setCellType(1);
+					rowList.add(entry.getStringCellValue());
+				}
 			}
-		}
 	
-		return rowList.toArray(new String[0]);
+			return rowList.toArray(new String[0]);
+		}
+		else
+			return null;
 	}
 	
 	private static String [] getColContents(Sheet sheet, int index) 
 	{
-		ArrayList<String> colList = new ArrayList<>();
-		Iterator<Row> rowIterator = sheet.iterator();
+		if (index != -1) {
+			ArrayList<String> colList = new ArrayList<>();
+			Iterator<Row> rowIterator = sheet.iterator();
 		
-		while (rowIterator.hasNext()) 
-		{
-			Cell entry = rowIterator.next().getCell(index);
-			if (entry != null) {
-				entry.setCellType(1);
-				colList.add(entry.getStringCellValue());
+			while (rowIterator.hasNext()) 
+			{
+				Cell entry = rowIterator.next().getCell(index);
+				if (entry != null) {
+					entry.setCellType(1);
+					colList.add(entry.getStringCellValue());
+				}
 			}
-		}
 		
-		return colList.toArray(new String[0]);
+			return colList.toArray(new String[0]);
+		}
+		else
+			return null;
 	}
 }

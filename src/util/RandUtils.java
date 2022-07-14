@@ -295,6 +295,8 @@ public class RandUtils {
 							level, stats[castingAbilityPos], dndclass.getSpellsKnown()));
 		}
 		
+		dndclass.finalizeAttacksAndSpellCasting();
+		
 		return dndclass;
 		
 	}

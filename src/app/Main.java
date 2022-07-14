@@ -1,20 +1,20 @@
 package app;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import GUI.AppFrame;
 import dndEntities.Alignment;
 import dndEntities.Background;
 import dndEntities.CharacterSheet;
 import dndEntities.DndClass;
 import dndEntities.Race;
 import util.IOUtils;
-import util.MathUtils;
 import util.RandUtils;
 
 public class Main {
 
 	private static int stats [];
-	private static String trait;
 	private static Race race;
 	private static Alignment align;
 	private static Background background;
@@ -23,6 +23,14 @@ public class Main {
 	
 	public static void main(String[] args) 
 	{
+		new AppFrame();
+		
+	}
+	
+	public static CharacterSheet createCharacter(String selectedLevel) 
+	{
+		level = selectedLevel.equalsIgnoreCase("Random") ? RandUtils.randomLevel() : 
+			Integer.parseInt(selectedLevel);
 		
 		Thread race_Thread = new Thread(new raceThread());
 		Thread background_Thread = new Thread(new backgroundThread());
@@ -41,10 +49,45 @@ public class Main {
 		DndClass dndclass = RandUtils.randomDndClass(race, background, level, stats);
 		CharacterSheet character = RandUtils.randomCharacter(dndclass);
 		
-		System.out.println(character);
+		return character;
+	}
+	
+	public static boolean createCharacterSheetFile(String fileLocation, CharacterSheet character) 
+	{
+		ArrayList<String> [] spells = character.getClassSpells();
+		int [] spellSlots = character.getSpellSlots();
+		boolean prepared = character.isPreparedCaster();
 		
-		ArrayList<String> data = new ArrayList<>();
+		Boolean [] buttonData =	fillButtonData(character);
+		String [] charaData = fillCharacterData(character);
+		
+		if (IOUtils.createCharacterSheet(charaData, buttonData, spells, spellSlots, prepared, fileLocation)) 
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	private static Boolean [] fillButtonData(CharacterSheet character) 
+	{
 		ArrayList<Boolean> butData = new ArrayList<>();
+		boolean [] button = character.getSavingProList();
+		
+		for (boolean val: button) {
+			butData.add(Boolean.valueOf(val));
+		}
+		
+		button = character.getSkillProList();
+		for (boolean val: button) {
+			butData.add(Boolean.valueOf(val));
+		}
+		
+		return butData.toArray(new Boolean[0]);
+	}
+	
+	private static String [] fillCharacterData(CharacterSheet character) 
+	{
+		ArrayList<String> data = new ArrayList<>();
 		data.add(character.getLevel() + " " + character.getClassName());
 		data.add(character.getBackgroundName());
 		data.add(character.getName());
@@ -109,6 +152,17 @@ public class Main {
 				data.add("");
 			}
 		}
+		
+		int [] money = character.getMoney();
+		
+		for (int mon: money) 
+		{
+			data.add(Integer.valueOf(mon).toString());
+		}
+		
+		data.add(character.featureString());
+		data.add(character.attSpellCastString());
+		
 		if (character.getCastingAbility() != null) {
 			data.add(character.getPathName() + " " + character.getClassName());
 			data.add(character.getCastingAbility());
@@ -120,32 +174,7 @@ public class Main {
 				data.add("");
 		}
 		
-		
-		boolean [] button = character.getSavingProList();
-		
-		for (boolean val: button) {
-			butData.add(Boolean.valueOf(val));
-		}
-		
-		button = character.getSkillProList();
-		for (boolean val: button) {
-			butData.add(Boolean.valueOf(val));
-		}
-		
-		ArrayList<String> [] spells = character.getClassSpells();
-		int [] spellSlots = character.getSpellSlots();
-		boolean prepared = character.isPreparedCaster();
-		
-		Boolean [] buttonData = butData.toArray(new Boolean[0]);
-		String [] charaData = data.toArray(new String [0]);
-		String filePath = "C:\\Users\\Ash\\Desktop\\TestSheet.pdf";
-		
-		if (IOUtils.createCharacterSheet(charaData, buttonData, spells, spellSlots, prepared, filePath)) 
-		{
-			System.out.println("Sheet created.");
-		}
-		
-		System.out.println(character.proficienciesString());
+		return data.toArray(new String[0]);
 	}
 	
 	private static class raceThread implements Runnable 
@@ -154,14 +183,10 @@ public class Main {
 		@Override
 		public void run() 
 		{
-			level = RandUtils.randomLevel();
-			level = 20;
 			stats = RandUtils.rollCharacterStats();
 			
 			race = RandUtils.randomRace(level);
 			
-			String fileName = "races/aasimar/traits.txt";
-			trait = RandUtils.randomTrait(fileName, -1);
 		}
 		
 	}

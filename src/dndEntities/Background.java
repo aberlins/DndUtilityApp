@@ -6,8 +6,9 @@ public class Background {
 	
 	private Alignment alignment;
 	private int backgroundIndex;
+	private int [] money = {0, 0, 0, 0, 0};
 	private String name, ideal, personalityTrait, bond, flaw;
-	private String [] skillProficiences, toolProficiences, languages, equipment, idealList;
+	private String [] skillProficiences, toolProficiences, languages, equipment, idealList, features;
 	public static final String backBondFileName = "backgrounds/Bonds.xlsx";
 	public static final String backFlawFileName = "backgrounds/Flaws.xlsx";
 	public static final String backIdealFileName = "backgrounds/Ideals.xlsx";
@@ -45,6 +46,8 @@ public class Background {
 	public String[] getLanguages() { return languages; }
 	public String[] getEquipment() { return equipment; }
 	public int getBackgroundIndex() { return backgroundIndex; }
+	public int[] getMoney() { return money; }
+	public String[] getFeatures() { return features; }
 
 	/*Simple Setters for all traits of the background*/
 	public void setName(String name) {this.name = name;}
@@ -88,6 +91,8 @@ public class Background {
 			this.toolProficiences = atts[2].split("=");
 			this.languages = atts[3].split("=");
 			this.equipment = atts[4].split("=");
+			initializeMoney(atts[5].split("="));
+			this.features = atts[6].split("=");
 		}
 	}
 	
@@ -102,5 +107,24 @@ public class Background {
 		background += "Bonds: " + bond;
 		
 		return background;
+	}
+	
+	private void initializeMoney(String [] money) 
+	{
+		int index = 0;
+		switch (money[1].charAt(0)) 
+		{
+			case 'C':
+				break;
+			case 'S':
+				index++; break;
+			case 'E':
+				index += 2; break;
+			case 'G':
+				index += 3; break;
+			case 'P':
+				index += 4; break;
+		}
+		this.money[index] =Integer.parseInt(money[0]);
 	}
 }

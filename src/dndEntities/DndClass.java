@@ -11,15 +11,15 @@ public class DndClass {
 	private String className, castingAbility, pathTitle, spellListFilePath;
 	private int hitDie, proBonus, spellsKnown, level, initBonus;
 	private String [] armorPro, weaponPro, toolPro, savingThrows, skillBonus, 
-		armors, weapons, otherItems, features, choicesList, langauges;
+		armors, weapons, otherItems, features, choicesList, langauges, attacksAndSpellCasting;
 	private ArrayList<String> [] spells;
 	private int [] spellSlots, abilityScores;
 	private char preparedOrKnownCaster;
 	private Race race;
 	private Background background;
-	public static final String classFileName = "classes/classPathway.txt";
 	public static final String classStandFile = "classes/StandardFeatures.xlsx";
 	public static final String classChoiceFile = "classes/ChoiceFeatures.xlsx";
+	public static final String classAttSpellIncr = "classes/AttackAndSpellCastingLevelIncr.xlsx";
 	
 	public DndClass(Race race, Background background, String className, int level, int [] abilityScores) 
 	{
@@ -54,7 +54,9 @@ public class DndClass {
 	public int[] getAbilityScores() { return abilityScores; }
 	public int getInitBonus() { return initBonus; }
 	public String[] getLangauges() { return langauges; }
-	
+	public String[] getFeatures() { return features; }
+	public String[] getAttacksAndSpellCasting() { return attacksAndSpellCasting; }
+
 	public int getSpellAttackBonus() {
 		if (castingAbility != null) {
 			return MathUtils.getSpellAttackBonus(castingAbility, proBonus, abilityScores);
@@ -264,10 +266,26 @@ public class DndClass {
 			completeSpellList = setBonusSpells(bonusSpellList[1]);
 		}
 		
-		this.features = updateList(archetypeInfo[7].split("="), this.features);
+		String [] newFeatures = setFeaturesOrAttacks(archetypeInfo[7]);
+		this.features = updateList(newFeatures, this.features);
 		
 		return completeSpellList;
 		
+	}
+	
+	public void finalizeAttacksAndSpellCasting() 
+	{
+		for (int i = 0; i < attacksAndSpellCasting.length; i++) 
+		{
+			String [] levelCol = 
+					IOUtils.getCol(attacksAndSpellCasting[i], classAttSpellIncr, true);
+			
+			if (levelCol != null) 
+			{
+				attacksAndSpellCasting[i] += " " + levelCol[level];
+			}
+			
+		}
 	}
 	
 	private void initilizeSpellCastingTraits(String [] spellCastingTraitList) 
@@ -294,7 +312,8 @@ public class DndClass {
 			initilizeSpellCastingTraits(spellList);
 		}
 		
-		features = setFeatures(featuresList[8]);
+		features = setFeaturesOrAttacks(featuresList[8]);
+		attacksAndSpellCasting = setFeaturesOrAttacks(featuresList[9]);
 		
 	}
 	
@@ -310,7 +329,7 @@ public class DndClass {
 		return -1;
 	}
 	
-	private String [] setFeatures(String line) 
+	private String [] setFeaturesOrAttacks(String line) 
 	{
 		ArrayList<String> tempFeatures = new ArrayList<>();
 		String featList [] = line.split("=");
@@ -390,5 +409,6 @@ public class DndClass {
 		}
 		return list;
 	}
+	
 	
 }

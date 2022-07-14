@@ -7,7 +7,7 @@ import util.IOUtils;
 public class Race 
 {
 	private String name, size, castingAbility, racialNameFilePath;
-	private String [] languages, abilities, armorPro, weaponPro, toolPro;
+	private String [] languages, features, armorPro, weaponPro, toolPro;
 	private ArrayList<String> [] spells;
 	private int [] abilityScoreIncr;
 	private int speed, maxAge;
@@ -23,7 +23,7 @@ public class Race
 	public String getName() { return name; }
 	public String getSize() { return size; }
 	public String[] getLanguages() { return languages; }
-	public String[] getAbilities() { return abilities; }
+	public String[] getFeatures() { return features; }
 	public int[] getAbilityScoreIncr() { return abilityScoreIncr; }
 	public int getSpeed() { return speed; }
 	public int getMaxAge() { return maxAge; }
@@ -47,8 +47,8 @@ public class Race
 		setRacialSpells(raceAttributes[2].split("="), level);
 		
 		line = raceAttributes[3].split("=");
-		this.abilities = new String[line.length];
-		System.arraycopy(line, 0, abilities, 0, abilities.length);
+		this.features = new String[line.length];
+		System.arraycopy(line, 0, features, 0, features.length);
 		
 		this.maxAge = (int)Double.parseDouble(raceAttributes[4]); 
 		this.size = raceAttributes[5];

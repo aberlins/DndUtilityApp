@@ -2,6 +2,7 @@ package dndEntities;
 
 import java.util.ArrayList;
 
+import util.GenUtils;
 import util.MathUtils;
 
 public class CharacterSheet {
@@ -38,6 +39,7 @@ public class CharacterSheet {
 	public String getIdeal() { return dndClass.getBackground().getIdeal(); }
 	public String getBond() { return dndClass.getBackground().getBond(); }
 	public String getFlaw() { return dndClass.getBackground().getFlaw(); }
+	public int [] getMoney() { return dndClass.getBackground().getMoney(); }
 	public int[] getAbilityScores() { return dndClass.getAbilityScores(); }
 	public int[] getAbilityModifers() { return dndClass.getAbilityModifers(); }
 	public int [] getSavingThrowScores() { return dndClass.getSavingThrowScores(); }
@@ -72,6 +74,10 @@ public class CharacterSheet {
 	public boolean[] getSkillProList() { return skillProList; }
 	public boolean[] getSavingProList() { return savingProList; }
 	public boolean isPreparedCaster() {return dndClass.isPreparedCaster(); }
+	public String [] getBackgroundFeatures() { return dndClass.getBackground().getFeatures(); }
+	public String [] getRacialFeatures() { return dndClass.getRace().getFeatures(); }
+	public String [] getClassFeatures() { return dndClass.getFeatures(); }
+	public String [] getAttacksAndSpellCasting() { return dndClass.getAttacksAndSpellCasting(); }
 	
 	public void setLanguages(String[] langauges) { this.languages = langauges; }
 	public void setHitPoints(int hitPoints) { this.hitPoints = hitPoints; }
@@ -79,28 +85,21 @@ public class CharacterSheet {
 	public String proficienciesString() 
 	{
 		String proString = "Proficiences: ";
-		for (String pro: dndClass.getAllProficiencies()) {
-			proString += pro + ", ";
-		}
-		return proString.substring(0, proString.length() - 2);
+		return proString += GenUtils.listWithCommas(dndClass.getAllProficiencies());
 	}
 	
 	public String languagesString() {
 		String langString = "Languages: ";
-		for (String lang: languages) {
-			langString += lang + ", ";
-		}
-		return langString.substring(0, langString.length() - 2);
+		return langString += GenUtils.listWithCommas(languages);
+		
 	}
 	
 	public String equipString() 
 	{
 		String equipString = "";
 		
-		for (String equip : getEquipment())
-		{
-			equipString += equip + ", ";
-		}
+		equipString += GenUtils.listWithCommas(getEquipment()) + ", ";
+		
 		String [] weapons = getWeapons();
 		int maxWeapons = 0;
 		for (int i = 0; i < weapons.length; i++)
@@ -112,12 +111,48 @@ public class CharacterSheet {
 			maxWeapons++;
 			
 		}
-		for (String armor: getArmor()) 
-		{
-			equipString += armor + ", ";
-		}
 		
-		return equipString.substring(0, equipString.length() - 2);
+		return equipString += GenUtils.listWithCommas(getArmor());
+	}
+	
+	public String featureString() 
+	{
+		String featureString = "";
+		if (getPathTitle() != null)
+		featureString += getPathTitle() + "\n";
+		featureString += "Gender: " + getGender() + "\tAge: " + Integer.valueOf(getAge()).toString() +"\n\n";
+		featureString += "Background Features: ";
+		featureString += GenUtils.listWithCommas(getBackgroundFeatures()) + "\n\n";
+		featureString += "Racial Features: ";
+		featureString += GenUtils.listWithCommas(getRacialFeatures()) + "\n";
+		if (getRaceCastingAbility() != null) 
+		{
+			featureString += "Racial Spells: ";
+			for (ArrayList<String> spellLevel : getRaceSpells()) 
+			{
+				for (String spell: spellLevel)
+					featureString += spell + ", ";
+			}
+			featureString = featureString.substring(0, featureString.length() - 2);
+		}
+		featureString += "\n\nClass Features: ";
+		featureString += GenUtils.listWithCommas(getClassFeatures());
+		
+		return featureString;
+	}
+	
+	public String attSpellCastString()
+	{
+		String attString = "";
+		String [] attSpellList = getAttacksAndSpellCasting();
+		for (String attSpell: attSpellList) 
+		{
+			attString += attSpell + "\n";
+		}
+		if (attSpellList.length > 0)
+			return attString.substring(0, attString.length() - 1);
+		else
+			return attString;
 	}
 
 	@Override
@@ -242,12 +277,8 @@ public class CharacterSheet {
 		for (ArrayList<String> spellLevel: spells) 
 		{
 			spellString += "Spell Level " + counter++ + ": ";
-			for (String spell: spellLevel) 
-			{
-				spellString += spell + ", ";
-			}
-			spellString = spellString.substring(0, spellString.length() - 2);
-			spellString += "\n";
+			spellString += GenUtils.listWithCommas(spellLevel.toArray(new String [0])) + "\n";
+			
 		}
 		return spellString.substring(0, spellString.length() - 1);
 	}
@@ -281,11 +312,7 @@ public class CharacterSheet {
 		
 		inventoryString += "Armors:\n";
 		
-		for (String armor: armors) 
-		{
-			inventoryString += armor + ", ";
-		}
-		inventoryString = inventoryString.substring(0, inventoryString.length() - 2) + "\n";
+		inventoryString += GenUtils.listWithCommas(armors) + "\n";
 		
 		inventoryString += "Items:\n";
 		
@@ -308,12 +335,9 @@ public class CharacterSheet {
 	{
 		String langString = "Languages: ";
 		
-		for (String lang: languages) 
-		{
-			langString += lang + ", ";
-		}
+		langString += GenUtils.listWithCommas(languages);
 		
-		return langString.substring(0, langString.length() - 2);
+		return langString;
 	}
 	
 	private String [] setInitialLanguages() 
@@ -363,5 +387,6 @@ public class CharacterSheet {
 		}
 		return proList;
 	}
+	
 	
 }

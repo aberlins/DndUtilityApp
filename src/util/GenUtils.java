@@ -56,5 +56,17 @@ public class GenUtils {
 		}
 		return totalList;
 	}
+	
+	public static String listWithCommas (String [] list) {
+		String listString = "";
+		for (String item: list) 
+		{
+			listString += item + ", ";
+		}
+		if (list.length > 0)
+			return listString.substring(0, listString.length() - 2);
+		else
+			return listString;
+	}
 
 }
